@@ -3,10 +3,10 @@
 #include <stdlib.h>
 
 void* helloWorld(void* args) {
-
+/*
     size_t thread_num = (size_t) args;
 
-    printf("Hello world from thread number # %zu\n", thread_num);
+    printf("Hello world from thread number # %zu\n", thread_num);*/
     return NULL;
 }
 
