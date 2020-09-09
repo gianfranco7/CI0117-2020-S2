@@ -1,10 +1,12 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 /*
 Modifique la solución del ejemplo de Hello World con espera activa visto en clase para obligar a los hilos de ejecución a saludar en orden en la salida estándar. Use una colección de mutexes, uno por cada thread. Haga que únicamente el thread 0 tenga su mutex habilitado. Cuando el thread 0 ha saludado, habilita el mutex del siguiente thread y así sucesivamente. Corra su solución y mida el tiempo de ejecución. ¿Permite este mecanismo de control de concurrencia resolver este problema de manera predecible?
 */
+struct timespec start, finish;                   
 
 typedef struct {
     size_t message;
@@ -44,7 +46,7 @@ void* helloWorld(void* args) {
 
 
 int main(int argc, char* arg[]) {
-
+    clock_gettime(CLOCK_REALTIME, &start);
     size_t thread_count = 0;
     size_t chosen_thread = 0;
 
@@ -81,7 +83,7 @@ int main(int argc, char* arg[]) {
     //lock every thread except first one
     for(size_t i = 1; i < thread_count; i++){
     	pthread_mutex_lock(&locks[i]);
-    
+    }
 
     //thread creation 
     for (size_t i = 0; i < thread_count; ++i) {
@@ -107,6 +109,10 @@ int main(int argc, char* arg[]) {
     	pthread_mutex_destroy(&locks[i]);
     }
     free(thread_data_list);
+    clock_gettime(CLOCK_REALTIME, &finish);
 
+    unsigned int time_taken = finish.tv_nsec - start.tv_nsec;
+    double total_time = (double) time_taken/1000000000;
+    printf("Time taken: %fs\n", total_time);
     return 0;
 }
