@@ -1,0 +1,1 @@
+El uso de mutexes permite resolver este problema de manera predecible ya que el orden de los hilos se mantiene con cada ejecución del programa.
