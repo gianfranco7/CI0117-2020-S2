@@ -66,6 +66,7 @@ int main(int argc, char * args[]){
     	}
         free(threads);
 	pthread_mutex_destroy(&lock);
+	pthread_barrier_destroy(&barrier);
     return 0;
 }
 
