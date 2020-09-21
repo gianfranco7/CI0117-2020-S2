@@ -3,7 +3,6 @@
 #include <semaphore.h>
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>
 #include <unistd.h>
 
 typedef struct{
@@ -22,7 +21,7 @@ typedef struct{
 } shared_data_t;
 
 typedef struct{
-    int isCapitan;
+    int isCaptain;
     size_t thread_num;
     shared_data_t* shared_data;
 } thread_data_t;
@@ -37,7 +36,7 @@ void random_sleep(useconds_t min_milliseconds, useconds_t max_milliseconds){
 
 void* hacker(void* args) {
 
-    random_sleep(3000, 5000);
+    random_sleep(1000, 2000);
 
     thread_data_t* data = (thread_data_t*) args;
 
@@ -53,7 +52,7 @@ void* hacker(void* args) {
             sem_post(&shared_data->hackerQueue);
         }
         shared_data->hackers = 0;
-        data->isCapitan = 1;
+        data->isCaptain = 1;
 
     } else if (shared_data->hackers == 2 && shared_data->serfs >= 2) {
         for (size_t i = 0; i < 2; ++i) {
@@ -62,7 +61,7 @@ void* hacker(void* args) {
         }
         shared_data->hackers = 0;
         shared_data->serfs -= 2;
-        data->isCapitan = 1;
+        data->isCaptain = 1;
     } else {
         pthread_mutex_unlock(&shared_data->mutex);
     }
@@ -70,17 +69,17 @@ void* hacker(void* args) {
     sem_wait(&shared_data->hackerQueue);
 
     //Board!
-    printf("Thread %zu (Hacker): On board!\n", thread_num);
+    	printf("------------------------Thread %zu (Hacker): On board!-------------------------\n", thread_num);
 
     //wait for 4 threads
     pthread_barrier_wait(&shared_data->barrier);
 
-    if (data->isCapitan) {
+    if (data->isCaptain) {
         //Row boat!
-        random_sleep(3000, 5000);
-        printf("-------------------------------------------\n");
-        printf("Thread %zu (Hacker): Row boat!!\n", thread_num);
-        printf("===========================================\n");
+        random_sleep(1000, 2000);
+        printf("-------------------------------------------------------------------------------\n");
+        printf("-------------------------Thread %zu (Hacker): Row boat!!-----------------------\n", thread_num);
+        printf("===============================================================================\n");
         pthread_mutex_unlock(&shared_data->mutex);
     }
 
@@ -89,7 +88,7 @@ void* hacker(void* args) {
 
 
 void* serf(void* args){
-    random_sleep(3000, 10000);
+    random_sleep(1000, 2000);
 
     thread_data_t* data = (thread_data_t*) args;
 
@@ -105,7 +104,7 @@ void* serf(void* args){
             sem_post(&shared_data->serfQueue);
         }
         shared_data->serfs = 0;
-        data->isCapitan = 1;
+        data->isCaptain = 1;
 
     } else if (shared_data->serfs == 2 && shared_data->hackers >= 2) {
         for (size_t i = 0; i < 2; ++i) {
@@ -114,7 +113,7 @@ void* serf(void* args){
         }
         shared_data->serfs = 0;
         shared_data->hackers -= 2;
-        data->isCapitan = 1;
+        data->isCaptain = 1;
     } else {
         pthread_mutex_unlock(&shared_data->mutex);
     }
@@ -122,17 +121,17 @@ void* serf(void* args){
     sem_wait(&shared_data->serfQueue);
 
     //Board!
-    printf("Thread %zu (Serf):On board!\n", thread_num);
+    	printf("-------------------------Thread %zu (Serf): On board!--- ----------------------\n", thread_num);
 
     //wait for 4 threads
     pthread_barrier_wait(&shared_data->barrier);
 
-    if (data->isCapitan) {
+    if (data->isCaptain) {
         //Row boat!
-        random_sleep(3000, 5000);
-        printf("-------------------------------------------\n");
-        printf("Thread %zu (Serf): Row boat!!\n", thread_num);
-        printf("===========================================\n");
+        random_sleep(1000, 2000);
+        printf("-------------------------------------------------------------------------------\n");
+        printf("-------------------------Thread %zu (Serf): Row boat!!-------------------------\n", thread_num);
+        printf("===============================================================================\n");
         pthread_mutex_unlock(&shared_data->mutex);
     }
 
@@ -142,10 +141,9 @@ void* serf(void* args){
 int main(){
 
 	//Variable declarations
-	//thread_data_t thread_data;
 	shared_data_t* shared_data = (shared_data_t*)calloc(1, sizeof(shared_data_t));
 	srand(time(NULL));
-	shared_data->thread_count = 4;//((rand()%10)+4)*4;	
+	shared_data->thread_count = ((rand()%10)+4);	
 
 	//Initialization of shared resources
 	sem_init(&shared_data->hackerQueue, 0, 0);
@@ -154,31 +152,41 @@ int main(){
 	pthread_barrier_init(&shared_data->barrier, NULL, 4);
 
 	//Distribute thread types randomly
-	shared_data->hacker_thread_count = 2;//rand()%shared_data->thread_count;
-	shared_data->serf_thread_count = 2;//shared_data->thread_count - shared_data->hacker_thread_count;
+	shared_data->hacker_thread_count = rand()%shared_data->thread_count;
+	shared_data->serf_thread_count = shared_data->thread_count - shared_data->hacker_thread_count;
 
-	//Allocate memory for both types of threads 
+	//Allocate memory for threads
 	pthread_t* hacker_threads = malloc((size_t)(shared_data->hacker_thread_count * sizeof(pthread_t)));
 	pthread_t* serf_threads = malloc((size_t)(shared_data->serf_thread_count * sizeof(pthread_t)));
 	
-	printf("Total number of hackers: %zu\n", shared_data->hacker_thread_count);
-	printf("Total number of serfs: %zu\n", shared_data->serf_thread_count);
+	//Print randomly generated thread distribution
+	printf("---------------------------River Crossing Problem----------------------------\n\n");
+	printf("\t\t>>>Total number of hackers in queue: %zu  <<<\n", shared_data->hacker_thread_count);
+	printf("\t\t>>>Total number of serfs in queue:   %zu  <<<\n\n", shared_data->serf_thread_count);
+	printf("-----------------------Begin transportation procedure------------------------\n\n");
+	
+	//Create data lists for both thread types
+	thread_data_t* thread_data_list_serf = malloc((size_t)(shared_data->serf_thread_count * sizeof(thread_data_t)));
+	thread_data_t* thread_data_list_hacker = malloc((size_t)(shared_data->hacker_thread_count * sizeof(thread_data_t)));
 
-	thread_data_t* thread_data_list_serf = malloc((size_t)(2 * sizeof(thread_data_t)));
-	thread_data_t* thread_data_list_hacker = malloc((size_t)(2* sizeof(thread_data_t)));
-
-	for(size_t i = 0; i < 2; i++){
-		thread_data_list_serf[i].isCapitan = 0;
+	//Create serf threads
+	for(size_t i = 0; i < shared_data->serf_thread_count; i++){
+		thread_data_list_serf[i].isCaptain = 0;
 		thread_data_list_serf[i].thread_num = i;
         	thread_data_list_serf[i].shared_data = shared_data;
-		thread_data_list_hacker[i].isCapitan = 0;
-                thread_data_list_hacker[i].thread_num = i;
-                thread_data_list_hacker[i].shared_data = shared_data;
-		pthread_create(&hacker_threads[i], NULL, hacker, (void*)&thread_data_list_hacker[i]);
 		pthread_create(&serf_threads[i], NULL, serf, (void*)&thread_data_list_serf[i]);
 	}
+	
+	//Create hacker threads
+	for (size_t j = 0; j < shared_data->hacker_thread_count; j++){
+		thread_data_list_hacker[j].isCaptain = 0;
+                thread_data_list_hacker[j].thread_num = j;
+                thread_data_list_hacker[j].shared_data = shared_data;
+		pthread_create(&hacker_threads[j], NULL, hacker, (void*)&thread_data_list_hacker[j]);
+	}
 
-	for(size_t i = 0; i < 2; i++){
+	//Join threads
+	for(size_t i = 0; i < shared_data->thread_count; i++){
 		pthread_join(serf_threads[i], NULL);
 		pthread_join(hacker_threads[i], NULL);
 	}
