@@ -18,14 +18,20 @@ double walltime_elapsed(const walltime_t* start){
 	return elapsed;
 }
 
-double riemann_serial(int lower_limit, int upper_limit, int number_of_rectangles){
+double f(double x){
 	double result = 0;
-
-	
-
-
-
+	result = (x*x) + 1;
 	return result;
+}
+
+double riemann_serial(double lower_limit, double upper_limit, double number_of_rectangles){
+	double rectangle_width =  (upper_limit-lower_limit)/number_of_rectangles;
+	double rectangle_height = 0;
+	double combined_area = 0;
+	for(int i = 0; i < number_of_rectangles; ++i){
+		combined_area += f(lower_limit+(i*rectangle_width));	
+	}
+	return combined_area*rectangle_width;
 }
 
 
