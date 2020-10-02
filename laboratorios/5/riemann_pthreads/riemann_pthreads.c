@@ -85,7 +85,6 @@ void * riemann_parallel(void * args)
 
 
 		thread_data->calculated_area += f(thread_data->thread_lower_limit+(thread_data->thread_counter*shared_data->rectangle_width));
-
 		printf("Current iteration: %zu\n", thread_data->thread_counter);
 		printf("Thread %zu calculated the following area = (%lf) = f( %lf + ( %zu * %lf  )\n",	thread_data->thread_num, 
 		thread_data->calculated_area, thread_data->thread_lower_limit, thread_data->thread_counter, shared_data->rectangle_width);
@@ -100,6 +99,22 @@ void * riemann_parallel(void * args)
 
 	return NULL;
 
+}
+
+void join_threads(pthread_t * threads, size_t thread_count){
+
+        for (size_t i = 0; i < thread_count; ++i)
+        {
+                pthread_join(threads[i], NULL);
+        }
+
+}
+
+void free_memory(pthread_t * threads, shared_data_t * shared_data, thread_data_t * thread_data_list){
+        free(threads);
+        free(shared_data);
+        free(thread_data_list);
+        pthread_mutex_destroy(&shared_data->mutex);
 }
 
 int main(int argc, char * args[])
@@ -184,9 +199,10 @@ int main(int argc, char * args[])
 			for(size_t i = 0; i < thread_count; ++i)
 			{
 
-				printf("Entered loop\n");
 				thread_data_list[i].shared_data = shared_data;
-                        	thread_data_list[i].thread_lower_limit = shared_data->lower_limit*(shared_data->rectangle_width*i);
+                        	thread_data_list[i].thread_lower_limit = shared_data->lower_limit + (shared_data->rectangle_width*i);
+                        	thread_data_list[i].thread_num = i;
+                        	printf("LOWER LIMIT SENT TO THREAD = %lf\n", thread_data_list[i].thread_lower_limit);
                         	pthread_create(&threads[i], NULL, riemann_parallel, (void*)&thread_data_list[i]);
                         	printf("Thread %zu created\n", i);
 
@@ -200,39 +216,41 @@ int main(int argc, char * args[])
 		{
 			printf("Entered case 2.2: non whole number of rectangles per thread\n");
 			shared_data->iterations_per_thread = floor(rectangles_per_thread);
-			printf("Iterations per thread: %zu\n", shared_data->iterations_per_thread);
+			printf("Iterations per thread: %zu for thread_count-1: %zu\n", shared_data->iterations_per_thread, thread_count-1);
 
 			for(size_t i = 0; i < thread_count-1; ++i)
 			{
 
-				printf("Entered loop\n");
 			        thread_data_list[i].shared_data = shared_data;
-                        	thread_data_list[i].thread_lower_limit = shared_data->lower_limit*(shared_data->rectangle_width*i);
+                        	thread_data_list[i].thread_lower_limit = shared_data->lower_limit + (shared_data->rectangle_width*i);
+                                thread_data_list[i].thread_num = i;
+                                printf("LOWER LIMIT SENT TO THREAD = %lf\n", thread_data_list[i].thread_lower_limit);
                         	pthread_create(&threads[i], NULL, riemann_parallel, (void*)&thread_data_list[i]);
                         	printf("Thread %zu created\n", i);
 
 			}
+			printf("Thread count-1 completed %zu iterations\n",shared_data->iterations_per_thread*thread_count-1);
 
-			//Load the last remaining threads with any remaining rectangles
+			//Load the last thread with any remaining rectangles
+			
 			shared_data->iterations_per_thread = shared_data->number_of_rectangles-(floor(rectangles_per_thread)*thread_count-1);
-			pthread_create(&*threads, NULL, riemann_parallel, (void *)shared_data);
+			thread_data_list[thread_count-1].shared_data = shared_data;
+			thread_data_list[thread_count-1].thread_lower_limit = shared_data->lower_limit + (shared_data->rectangle_width*thread_count-1);
+			thread_data_list[thread_count].thread_num = thread_count-1;
+                        printf("LOWER LIMIT SENT TO THREAD = %lf\n", thread_data_list[thread_count].thread_lower_limit);
+			pthread_create(&threads[thread_count], NULL, riemann_parallel, (void *)shared_data);
+			printf("Final thread %zu created, loaded with %zu iterations\n", thread_data_list[thread_count].thread_num, 
+			shared_data->iterations_per_thread);
 		}
 	}
 
-	//Join threads, wait for all of them to finish
-	for (size_t i = 0; i < thread_count; ++i)
-	{
-        	pthread_join(threads[i], NULL);
-    	}
+	join_threads(threads, thread_count);
 
-	printf("Combined area = %lf * Rectangle width %lf = %lf\n",shared_data->combined_area,shared_data->rectangle_width,shared_data->combined_area*shared_data->rectangle_width);
+	printf("Combined area = %lf  = %lf*%lf\n",shared_data->combined_area*shared_data->rectangle_width,shared_data->rectangle_width,shared_data->combined_area);
 	double elapsed = walltime_elapsed(&time);
 	printf("Time taken = %f\n", elapsed);
 
-	//Memory cleanup
-	free(threads);
-	free(shared_data);
-	free(thread_data_list);
-	pthread_mutex_destroy(&shared_data->mutex);
+	free_memory(threads,shared_data,thread_data_list);
+
 	return 0;
 }
