@@ -6,7 +6,7 @@
 | 1,000,000 | 10.666659  | 0.020366 |  0.019056 | 0.016053  | 0.006618 |  0.013558 |
 | 1,000,000,000 | 10.666667  | 12.448663 | 11.436838  |  4.335590 | 4.055215 | 3.892265 |
 
-Podemos concluir que la diferencia entre el rendimiento del programa serial y el concurrente no es mucha cuando se trata de _pocos_ rectángulos (>1,000,000)
+Podemos concluir que la diferencia entre el rendimiento del programa serial y el concurrente no es mucha cuando se trata de _pocos_ rectángulos (1,000,000<)
 pero al tratar con cantidades bastante grandes, como un billón, se nota bastante la diferencia en el tiempo de ejecución, siendo la velocidad del programa concurrente el doble de eficiente que el programa serial.
 
 Elaborado por:
