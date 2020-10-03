@@ -1,4 +1,4 @@
-### <p style="text-align: center;">Universidad de Costa Rica</p>
+### Universidad de Costa Rica
 ### Escuela de Ciencias de la Computación e Informática
 ### Proyecto 1 CI0117 - Programación Paralela y Concurrente 
 ### Pthreadmon
