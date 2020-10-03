@@ -9,6 +9,6 @@
 Podemos concluir que la diferencia entre el rendimiento del programa serial y el concurrente no es mucha cuando se trata de _pocos_ rectángulos (>1,000,000)
 pero al tratar con cantidades bastante grandes, como un billón, se nota bastante la diferencia en el tiempo de ejecución, siendo la velocidad del programa concurrente el doble de eficiente que el programa serial.
 
-##Elaborado por:
-##-Gianfranco Bagnarello Hernández B70866
-##-Katherine González Arias B22867
+Elaborado por:
+-Gianfranco Bagnarello Hernández B70866
+-Katherine González Arias B22867
