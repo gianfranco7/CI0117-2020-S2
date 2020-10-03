@@ -1,7 +1,10 @@
-#Proyecto 1 - CI-0117
-#>PTHREADMON
-#-Elaborado por:
-#-Gianfranco Bagnarello Hernández, B70866
-#-Katherine González Arias, B22
+### Universidad de Costa Rica
+### Escuela de Ciencias de la Computación e Informática
+### Proyecto 1 CI0117 - Programación Paralela y Concurrente 
+### PTHREADMON  
+### Profesor José Andrés Mena
+### Estudiantes: 
+### - Gianfranco Bagnarello Hernández, B70866  
+### - Katherine González Arias, B22  
 
 
