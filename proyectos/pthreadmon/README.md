@@ -8,6 +8,6 @@
 ### Profesor José Andrés Mena
 ### Estudiantes: 
 ### - Gianfranco Bagnarello Hernández, B70866  
-### - Katherine González Arias, B22  
+### - Katherine González Arias, B22867  
 
 
