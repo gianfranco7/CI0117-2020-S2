@@ -43,7 +43,7 @@ int main(int argc, char * args[]){
 	for (size_t i = 0; i < thread_count; ++i) {
         	pthread_join(threads[i], NULL);
     	}
-
+        free(threads);
 	pthread_mutex_destroy(&lock);
     return 0;
 }
