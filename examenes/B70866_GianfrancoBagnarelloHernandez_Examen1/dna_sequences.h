@@ -1,5 +1,12 @@
 #ifndef DNA_SEQUENCES_H
 #define DNA_SEQUENCES_H
-const int first_sequence[26] = {0,4,2,5,1,5,6,9,2,9,10,11,10,13,14,15,16,17,18,20,20,21,22,14,24}; 
-const int second_sequence[26] = {0,4,2,5,1,5,6,9,2,9,10,11,10,13,14,15,16,17,18,20,20,21,22,14,24};
+
+#define ALPHABET_SIZE 26
+#define FIRST_SEQUENCE_SIZE 5
+#define SECOND_SEQUENCE_SIZE 4
+
+const int alphabet[ALPHABET_SIZE] = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
+const char first_sequence[FIRST_SEQUENCE_SIZE] = {'a','b','a','b','c' };
+const char second_sequence[SECOND_SEQUENCE_SIZE] = {'a','c','z','f'};
+
 #endif 
