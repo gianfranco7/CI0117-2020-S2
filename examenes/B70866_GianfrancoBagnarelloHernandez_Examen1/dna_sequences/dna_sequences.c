@@ -280,7 +280,7 @@ int main(int argc, char * args[])
 			}
 
 
-			//Load the last thread with any remaining rectangles
+			//Load the last thread with remaining length
 			
 			thread_data_list_sequence_one[thread_count-1].shared_data = shared_data;
 
@@ -377,7 +377,7 @@ pthread_create(&threads1[thread_count-1], NULL, get_first_sequence_occurrences, 
 			}
 
 
-			//Load the last thread with any remaining rectangles
+			//Load the last thread with remaining length
 			
 			thread_data_list_sequence_two[thread_count-1].shared_data = shared_data;
 
@@ -395,7 +395,7 @@ pthread_create(&threads2[thread_count-1], NULL, get_second_sequence_occurrences,
 	}
 
 	join_threads(threads2, thread_count);
-//SECOND SEQUENCE END
+	//SECOND SEQUENCE END
 
 	printf("Sequence 1. Occurrences:");	
 	print_occurrences(shared_data->first_sequence_occurrences);
