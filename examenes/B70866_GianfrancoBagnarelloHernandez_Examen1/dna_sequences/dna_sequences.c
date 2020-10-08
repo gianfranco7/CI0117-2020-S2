@@ -46,26 +46,18 @@ void * get_first_sequence_occurrences(void * args)
 			{
 				
 				occurrence_counter++;
-				//printf("Occurrence counter = %d\n", occurrence_counter);
 
 			}
 
 		}
-
-		
+	
 		thread_data->thread_calculated_occurrences[i] = occurrence_counter;
 
 		pthread_mutex_lock(&shared_data->mutex);
-
-		//printf("Thread %d inserted these to main occurrence aray: ", thread_data->thread_num);
-		//printf("%d ",shared_data->first_sequence_occurrences[i]);
 		shared_data->first_sequence_occurrences[i]+=thread_data->thread_calculated_occurrences[i];
-		//printf("\n");
-
 		pthread_mutex_unlock(&shared_data->mutex);
 
 	}
-
 
 	return NULL;
 }
@@ -89,7 +81,6 @@ void * get_second_sequence_occurrences(void * args)
 			{
 				
 				occurrence_counter++;
-				//printf("Occurrence counter = %d\n", occurrence_counter);
 
 			}
 
@@ -99,12 +90,7 @@ void * get_second_sequence_occurrences(void * args)
 		thread_data->thread_calculated_occurrences[i] = occurrence_counter;
 
 		pthread_mutex_lock(&shared_data->mutex);
-
-		//printf("Thread %d inserted these to main occurrence aray: ", thread_data->thread_num);
-		//printf("%d ",shared_data->second_sequence_occurrences[i]);
 		shared_data->second_sequence_occurrences[i]+=thread_data->thread_calculated_occurrences[i];
-		//printf("\n");
-
 		pthread_mutex_unlock(&shared_data->mutex);
 
 	}
@@ -168,7 +154,8 @@ void print_common_letters(shared_data_t * shared_data)
 }
 
 
-void print_new_line(){
+void print_new_line()
+{
 
 	printf("\n");
 	
@@ -221,8 +208,6 @@ int main(int argc, char * args[])
 
 	//SEQUENCE ONE BEGIN
 
-	printf("ENTERED SEQUENCE ONE=---------------\n");
-
 	pthread_t* threads1 		= malloc((size_t)(thread_count * sizeof(pthread_t)));
 	thread_data_t* thread_data_list_sequence_one = malloc((size_t)(thread_count * sizeof(thread_data_t)));
 	thread_data_list_sequence_one->shared_data = shared_data;
@@ -231,13 +216,11 @@ int main(int argc, char * args[])
 
 	double first_sequence_size = (double) FIRST_SEQUENCE_SIZE;	
 	double sequence_one_range_length = first_sequence_size/thread_count;		
-	printf("Length per thread calculated: %lf\n", sequence_one_range_length);
 
 	//Case 1: More threads than spaces in array, create n threads where n equals the amount of spaces in the array
 	if(sequence_one_range_length <= 1)
 	{
 		
-		printf("Entered case 1: length per thread  <=  1\n");
 
 		for (size_t i = 0; i  <  (size_t) FIRST_SEQUENCE_SIZE ; ++i) 
 		{
@@ -246,12 +229,9 @@ int main(int argc, char * args[])
 			thread_data_list_sequence_one[i].lower_limit = i;
 			thread_data_list_sequence_one[i].upper_limit = i+1;
 			thread_data_list_sequence_one[i].thread_num = i;
-			printf("LOWER LIMIT SENT TO THREAD = %d\n", thread_data_list_sequence_one[i].lower_limit);
-			printf("UPPER LIMIT SENT TO THREAD = %d\n", thread_data_list_sequence_one[i].upper_limit);
             pthread_create(&threads1[i], NULL, get_first_sequence_occurrences, (void*)&thread_data_list_sequence_one[i]);
-			printf("Thread %zu created\n", i);
 
-        	}	
+        }	
 
 	}
 	
@@ -260,12 +240,9 @@ int main(int argc, char * args[])
 	if(sequence_one_range_length > 1)
 	{
 
-		printf("Entered case 2: sequence_one_range_length > 1\n");
 		//Case 2.1 If sequence length is a whole number, divide equally among threads
 		if(floor(sequence_one_range_length) == sequence_one_range_length)
 		{
-
-			printf("Entered case 2.1: sequence_length is a whole number. Divide equally\n");
 			
 			int j = 0;
 			for(size_t i = 0; i < thread_count; i++)
@@ -276,10 +253,7 @@ int main(int argc, char * args[])
 				thread_data_list_sequence_one[i].upper_limit = j+sequence_one_range_length;
 				j+=sequence_one_range_length;
 				thread_data_list_sequence_one[i].thread_num = i;
-                printf("LOWER LIMIT SENT TO THREAD = %d\n", thread_data_list_sequence_one[i].lower_limit);
-				printf("UPPER LIMIT SENT TO THREAD = %d\n", thread_data_list_sequence_one[i].upper_limit);
                 pthread_create(&threads1[i], NULL, get_first_sequence_occurrences, (void*)&thread_data_list_sequence_one[i]);
-                printf("Thread %zu created\n", i);
 
 			}
 
@@ -290,7 +264,6 @@ int main(int argc, char * args[])
 		else
 		{
 
-			printf("Entered case 2.2: non whole number sequence per thread\n");
 
 			
 			int j = 0;
@@ -301,10 +274,7 @@ int main(int argc, char * args[])
                 thread_data_list_sequence_one[i].lower_limit = j;
 				thread_data_list_sequence_one[i].upper_limit = j+floor(sequence_one_range_length);
                 thread_data_list_sequence_one[i].thread_num = i;
-                printf("LOWER LIMIT SENT TO THREAD = %d\n", thread_data_list_sequence_one[i].lower_limit);
-				printf("UPPER LIMIT SENT TO THREAD = %d\n", thread_data_list_sequence_one[i].upper_limit);
                 pthread_create(&threads1[i], NULL, get_first_sequence_occurrences, (void*)&thread_data_list_sequence_one[i]);
-                printf("Thread %d created\n", i);
 				j+=floor(sequence_one_range_length);
 
 			}
@@ -320,8 +290,6 @@ int main(int argc, char * args[])
 
 			thread_data_list_sequence_one[thread_count-1].thread_num = thread_count-1;
 
-            printf("LOWER LIMIT SENT TO THREAD = %d\n", thread_data_list_sequence_one[thread_count-1].lower_limit);
-			printf("UPPER LIMIT SENT TO THREAD = %d\n", thread_data_list_sequence_one[thread_count-1].upper_limit);
 
 pthread_create(&threads1[thread_count-1], NULL, get_first_sequence_occurrences, (void *)&thread_data_list_sequence_one[thread_count-1]);
 
@@ -338,7 +306,6 @@ pthread_create(&threads1[thread_count-1], NULL, get_first_sequence_occurrences, 
 
 //SECOND SEQUENCE START
 
-printf("ENTERED SEQUENCE TWO=---------------\n");
 
 	pthread_t* threads2 		= malloc((size_t)(thread_count * sizeof(pthread_t)));
 	thread_data_t* thread_data_list_sequence_two = malloc((size_t)(thread_count * sizeof(thread_data_t)));
@@ -346,13 +313,11 @@ printf("ENTERED SEQUENCE TWO=---------------\n");
 
 	double second_sequence_size = (double) SECOND_SEQUENCE_SIZE;	
 	double sequence_two_range_length = second_sequence_size/thread_count;		
-	printf("Length per thread calculated: %lf\n", sequence_two_range_length);
 
 	//Case 1: More threads than spaces in array, create n threads where n equals the amount of spaces in the array
 	if(sequence_two_range_length <= 1)
 	{
 		
-		printf("Entered case 1: length per thread  <=  1\n");
 
 		for (size_t i = 0; i  <  (size_t) SECOND_SEQUENCE_SIZE ; ++i) 
 		{
@@ -361,12 +326,9 @@ printf("ENTERED SEQUENCE TWO=---------------\n");
 			thread_data_list_sequence_two[i].lower_limit = i;
 			thread_data_list_sequence_two[i].upper_limit = i+1;
 			thread_data_list_sequence_two[i].thread_num = i;
-			printf("LOWER LIMIT SENT TO THREAD = %d\n", thread_data_list_sequence_two[i].lower_limit);
-			printf("UPPER LIMIT SENT TO THREAD = %d\n", thread_data_list_sequence_two[i].upper_limit);
             pthread_create(&threads2[i], NULL, get_second_sequence_occurrences, (void*)&thread_data_list_sequence_two[i]);
-			printf("Thread %zu created\n", i);
 
-        	}	
+        }	
 
 	}
 	
@@ -375,12 +337,10 @@ printf("ENTERED SEQUENCE TWO=---------------\n");
 	if(sequence_two_range_length > 1)
 	{
 
-		printf("Entered case 2: sequence_one_range_length > 1\n");
 		//Case 2.1 If sequence length is a whole number, divide equally among threads
 		if(floor(sequence_two_range_length) == sequence_two_range_length)
 		{
 
-			printf("Entered case 2.1: sequence_length is a whole number. Divide equally\n");
 			
 			int j = 0;
 			for(size_t i = 0; i < thread_count; i++)
@@ -391,10 +351,7 @@ printf("ENTERED SEQUENCE TWO=---------------\n");
 				thread_data_list_sequence_two[i].upper_limit = j+sequence_two_range_length;
 				j+=sequence_two_range_length;
 				thread_data_list_sequence_two[i].thread_num = i;
-                printf("LOWER LIMIT SENT TO THREAD = %d\n", thread_data_list_sequence_two[i].lower_limit);
-				printf("UPPER LIMIT SENT TO THREAD = %d\n", thread_data_list_sequence_two[i].upper_limit);
                 pthread_create(&threads2[i], NULL, get_second_sequence_occurrences, (void*)&thread_data_list_sequence_two[i]);
-                printf("Thread %zu created\n", i);
 
 			}
 
@@ -405,8 +362,6 @@ printf("ENTERED SEQUENCE TWO=---------------\n");
 		else
 		{
 
-			printf("Entered case 2.2: non whole number sequence per thread\n");
-
 			
 			int j = 0;
 			for(int i = 0; i < thread_count-1; ++i)
@@ -416,10 +371,7 @@ printf("ENTERED SEQUENCE TWO=---------------\n");
                 thread_data_list_sequence_two[i].lower_limit = j;
 				thread_data_list_sequence_two[i].upper_limit = j+floor(sequence_two_range_length);
                 thread_data_list_sequence_two[i].thread_num = i;
-            	printf("LOWER LIMIT SENT TO THREAD = %d\n", thread_data_list_sequence_two[i].lower_limit);
-				printf("UPPER LIMIT SENT TO THREAD = %d\n", thread_data_list_sequence_two[i].upper_limit);
                 pthread_create(&threads2[i], NULL, get_second_sequence_occurrences, (void*)&thread_data_list_sequence_two[i]);
-                printf("Thread %d created\n", i);
 				j+=floor(sequence_two_range_length);
 
 			}
@@ -434,9 +386,6 @@ printf("ENTERED SEQUENCE TWO=---------------\n");
 			thread_data_list_sequence_two[thread_count-1].upper_limit = SECOND_SEQUENCE_SIZE;
 
 			thread_data_list_sequence_two[thread_count-1].thread_num = thread_count-1;
-
-            printf("LOWER LIMIT SENT TO THREAD = %d\n", thread_data_list_sequence_two[thread_count-1].lower_limit);
-			printf("UPPER LIMIT SENT TO THREAD = %d\n", thread_data_list_sequence_two[thread_count-1].upper_limit);
 
 pthread_create(&threads2[thread_count-1], NULL, get_second_sequence_occurrences, (void *)&thread_data_list_sequence_two[thread_count-1]);
 
