@@ -174,7 +174,7 @@ int main(int argc, char * args[])
 			thread_data_list[i].thread_lower_limit = shared_data->lower_limit + (shared_data->rectangle_width*i);
 			thread_data_list[i].thread_num = i;
 //			printf("LOWER LIMIT SENT TO THREAD = %lf\n", thread_data_list[i].thread_lower_limit);
-                	pthread_create(&threads[i], NULL, riemann_parallel, (void*)&thread_data_list[i]);
+            pthread_create(&threads[i], NULL, riemann_parallel, (void*)&thread_data_list[i]);
 //			printf("Thread %zu created\n", i);
 
         	}	

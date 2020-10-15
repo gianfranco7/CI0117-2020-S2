@@ -88,7 +88,7 @@ int main(int argc, char* arg[]) {
     //thread creation 
     for (size_t i = 0; i < thread_count; ++i) {
 	//lock the semaphore of current thread
-	sem_wait(&semaphores[i]);
+	    sem_wait(&semaphores[i]);
         thread_data_list[i].thread_num = i;
         thread_data_list[i].shared_message = shared_message;
         pthread_create(&threads[i], NULL, helloWorld, (void*)&thread_data_list[i]);

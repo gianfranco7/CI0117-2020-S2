@@ -5,7 +5,7 @@
 
 ---
 
-### Profesor José Andrés Mena
+### Profesor José Andrés Mena Arias
 ### Estudiantes: 
 ### - Gianfranco Bagnarello Hernández, B70866  
 ### - Katherine González Arias, B22867  
