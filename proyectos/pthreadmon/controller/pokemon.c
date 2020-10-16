@@ -69,6 +69,7 @@ void print_pokemon()
 			}
 		}
 	}
+	printf("PRINT POKEMON CHECKPOINT\n");
 }
 
 void start_battle_time()
@@ -92,6 +93,7 @@ double calculate_damage(int target_pokemon_type, int attacking_move_type)
 {
 	if (weaknesses_matrix[target_pokemon_type][attacking_move_type])
 	{
+		printf("It'super effective!!!\n");
 		return 1.6;
 	}
 	else if (resistances_matrix[target_pokemon_type][attacking_move_type])
@@ -100,6 +102,7 @@ double calculate_damage(int target_pokemon_type, int attacking_move_type)
 	}
 	else if (immunities_matrix[target_pokemon_type][attacking_move_type])
 	{
+		printf("It's not very effective...\n");
 		return 0.390625;
 	}
 	else
@@ -123,7 +126,7 @@ void *fight(void *args)
 		pthread_mutex_lock(&shared_data->player2_mutexes[pokemon_data->num]);
 	}
 
-
+	pthread_mutex_lock(&pokemon_data->my_mutex);
 
 	while (pokemon_data->hp > 0)
 	{

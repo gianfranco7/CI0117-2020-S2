@@ -3,7 +3,6 @@
 #include <time.h>
 #include <stdbool.h>
 #include <pthread.h>
-
 #ifndef PLAYERS_H_
 #define PLAYERS_H_
 #define _XOPEN_SOURCE 600
@@ -29,8 +28,8 @@ typedef struct
     bool winner;
     bool loser;
     walltime_t time_lived;
+    pthread_mutex_t my_mutex;
     shared_data_t *shared_data;
-    battlefield_data_t *battle_zone;
 } pokemon_data_t;
 
 typedef struct
