@@ -44,16 +44,12 @@ int main()
 	//>>Final time measurement
 	//begin_battle();
 	
+
 	p1_pokemon_data_list->shared_data = shared_data;
 	p2_pokemon_data_list->shared_data = shared_data;
 	printf("CHECKPOINT3\n");
+	start_battle_time(&battle_time);
 	//bloquear todos excepto el primero de cada jugador
-	//preguntarle al profe cual de las dos es mejor opcion
-	for(int z = 1; z < AMOUNT_OF_POKEMON; ++z)
-	{
-		pthread_mutex_lock(&shared_data->player1_mutexes[z]);
-		pthread_mutex_lock(&shared_data->player2_mutexes[z]);
-	}
 	printf("CHECKPOINT4\n");
 	for(int z = 1; z < AMOUNT_OF_POKEMON; ++z)
 	{
@@ -61,26 +57,32 @@ int main()
 		pthread_mutex_lock(&p2_pokemon_data_list[z].my_mutex);
 	}
 	printf("CHECKPOINT5\n");
-	battle_zone->pk1 = p1_pokemon_data_list[1];
-	battle_zone->pk2 = p2_pokemon_data_list[1];
+	battle_zone->pk1 = p1_pokemon_data_list[0];
+	battle_zone->pk2 = p2_pokemon_data_list[0];
 	for (int i = 0; i < AMOUNT_OF_POKEMON; ++i)
 	{
 		printf("CHECKPOINT6\n");
 		p1_pokemon_data_list[i].shared_data = shared_data;
+		p1_pokemon_data_list[i].hp = STARTING_HEALTH;
+		p1_pokemon_data_list[i].power = STARTING_POWER;
+		p1_pokemon_data_list[i].player_num = 0;
 		p2_pokemon_data_list[i].shared_data = shared_data;
+		p2_pokemon_data_list[i].hp = STARTING_HEALTH;
+		p2_pokemon_data_list[i].power = STARTING_POWER;
+		p2_pokemon_data_list[i].player_num = 1;
 		pthread_create(&p1_pokemon[i], NULL, fight, (void *)&p1_pokemon_data_list[i]);
 		pthread_create(&p2_pokemon[i], NULL, fight, (void *)&p2_pokemon_data_list[i]);
 	}
-	printf("CHECKPOINT7\n");
+	printf("CHECKPOINT ANTES DE JOIN\n");
 	join_threads(p1_pokemon, AMOUNT_OF_POKEMON);
 	join_threads(p2_pokemon, AMOUNT_OF_POKEMON);
-	printf("CHECKPOINT8\n");
+	printf("CHECKPOINT DESPUES DE JOIN\n");
 	//POST BATTLE SCREEN
 	//>>Print battle time on a label
 	//Print winner/loser on a label
 	//Print pokemon survival times on label, if pokemon didn't die, print "SURVIVED" on time label
 	//Create button to go back to the selection screen
 	free_memory(p1_pokemon, p2_pokemon, shared_data, p1_pokemon_data_list, p2_pokemon_data_list);
-	printf("CHECKPOINT9\n");
+	printf("CHECKPOINT DESPUES DEL FREE\n");
 	return 0;
 }

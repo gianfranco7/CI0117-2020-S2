@@ -2,7 +2,7 @@
 #include "../controller/mapper.c"
 #define AMOUNT_OF_POKEMON 3
 #define ATTACK_BONUS 2.3
-#define STARTING_ENERGY 0
+#define STARTING_POWER 0
 #define STARTING_HEALTH 1500
 
 void walltime_start(walltime_t *start)
@@ -89,7 +89,7 @@ void begin_battle()
 	start_battle_time();
 }
 
-double calculate_damage(int target_pokemon_type, int attacking_move_type)
+double calculate_effectiveness(int target_pokemon_type, int attacking_move_type)
 {
 	if (weaknesses_matrix[target_pokemon_type][attacking_move_type])
 	{
@@ -111,36 +111,71 @@ double calculate_damage(int target_pokemon_type, int attacking_move_type)
 	}
 }
 
+double calculate_damage(double power, double effectiveness, double bonus)
+{
+	return floor(power * effectiveness * bonus) + 1;;
+}
+
 void *fight(void *args)
 {
 	pokemon_data_t *pokemon_data = (pokemon_data_t *)args;
 	shared_data_t *shared_data = pokemon_data->shared_data;
 	pthread_barrier_wait(&shared_data->barrier);
-
-	if (pokemon_data->player_num == 0)
-	{
-		pthread_mutex_lock(&shared_data->player1_mutexes[pokemon_data->num]);
-	}
-	if (pokemon_data->player_num == 1)
-	{
-		pthread_mutex_lock(&shared_data->player2_mutexes[pokemon_data->num]);
-	}
-
 	pthread_mutex_lock(&pokemon_data->my_mutex);
-
+	walltime_start(&pokemon_data->time_lived);
 	while (pokemon_data->hp > 0)
 	{
-		if (pokemon_data->energy > get_move_energy(get_move_type_id(pokemon_data->id))) 
-		{
-			double damage = calculate_damage(get_pokemon_type_id(battle_zone->pk1.id), 
-			get_pokemon_type_id(battle_zone->pk2.id));
+		if (pokemon_data->power > get_move_energy(get_pokemon_charged_move_id(pokemon_data->id)))
+		{	//ataque cargado
+			if(pokemon_data->player_num == 0)
+			{
+				double move_energy = get_move_energy(get_pokemon_charged_move_id(pokemon_data->id));
+				double effectiveness = calculate_effectiveness(get_pokemon_type_id(battle_zone->pk2.id),
+				get_pokemon_type_id(pokemon_data->id));
+				double damage = calculate_damage(move_energy,effectiveness,ATTACK_BONUS);
+				battle_zone->pk2.hp-=damage;
+				usleep(get_move_cooldown(get_pokemon_charged_move_id(pokemon_data->id)));
+			}else
+			{
+				double move_energy = get_move_energy(get_pokemon_charged_move_id(pokemon_data->id));
+				double effectiveness = calculate_effectiveness(get_pokemon_type_id(battle_zone->pk1.id),
+				get_pokemon_type_id(pokemon_data->id));
+				double damage = calculate_damage(move_energy,effectiveness,ATTACK_BONUS);
+				battle_zone->pk1.hp-=damage;
+				usleep(get_move_cooldown(get_pokemon_charged_move_id(pokemon_data->id)));
+			}
 		}
-		else
+		else	//ataque rapido
 		{
-			
+			double power = get_move_energy(get_pokemon_fast_move_id(pokemon_data->id));
+			if(pokemon_data->player_num == 0)
+			{
+				double move_energy = get_move_energy(get_pokemon_fast_move_id(pokemon_data->id));
+				double effectiveness = calculate_effectiveness(get_pokemon_type_id(battle_zone->pk2.id),
+				get_pokemon_type_id(pokemon_data->id));
+				double damage = calculate_damage(move_energy,effectiveness,ATTACK_BONUS);
+				battle_zone->pk2.hp-=damage;
+				usleep(get_move_cooldown(get_pokemon_fast_move_id(pokemon_data->id)));
+			}else
+			{
+				double move_energy = get_move_energy(get_pokemon_fast_move_id(pokemon_data->id));
+				double effectiveness = calculate_effectiveness(get_pokemon_type_id(battle_zone->pk1.id),
+				get_pokemon_type_id(pokemon_data->id));
+				double damage = calculate_damage(move_energy,effectiveness,ATTACK_BONUS);
+				battle_zone->pk1.hp-=damage;
+				usleep(get_move_cooldown(get_pokemon_fast_move_id(pokemon_data->id)));
+			}
 		}
 	}
-
+	//desbloquear el mutex del siguiente
+	walltime_elapsed(&pokemon_data->time_lived);
+	if(pokemon_data->player_num == 0 && pokemon_data->player_num != 2){
+		pthread_mutex_unlock(&p1_pokemon_data_list[pokemon_data->num+1].my_mutex);
+	}
+	if(pokemon_data->player_num == 0 && pokemon_data->player_num != 2)
+	{
+		pthread_mutex_unlock(&p2_pokemon_data_list[pokemon_data->num+1].my_mutex);
+	}
 	return NULL;
 }
 

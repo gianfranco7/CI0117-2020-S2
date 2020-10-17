@@ -3,6 +3,8 @@
 #include <time.h>
 #include <stdbool.h>
 #include <pthread.h>
+#include <math.h>
+#include <unistd.h>
 #ifndef PLAYERS_H_
 #define PLAYERS_H_
 #define _XOPEN_SOURCE 600
@@ -24,7 +26,7 @@ typedef struct
     int num; //battle order num
     int id;
     double hp;
-    double energy;
+    double power;
     bool winner;
     bool loser;
     walltime_t time_lived;
@@ -34,6 +36,8 @@ typedef struct
 
 typedef struct
 {
+    int id_pk1;
+    int id_pk2;
     pokemon_data_t pk1;
     pokemon_data_t pk2;
 }battlefield_data_t;
