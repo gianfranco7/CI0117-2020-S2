@@ -16,6 +16,8 @@ typedef struct
     pthread_barrier_t barrier0;
     pthread_barrier_t barrier1;
     pthread_mutex_t charged_attack_mutex;
+    pthread_mutex_t p0mutex;
+    pthread_mutex_t p1mutex;
     int active_p0_num;  //battle order num
     int active_p1_num;  //battle order_num
 } shared_data_t;
