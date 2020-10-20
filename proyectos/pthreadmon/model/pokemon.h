@@ -30,7 +30,6 @@ typedef struct
     double hp;
     double power;
     walltime_t time_lived;
-    pthread_mutex_t my_mutex;
     shared_data_t *shared_data;
 } pokemon_data_t;
 

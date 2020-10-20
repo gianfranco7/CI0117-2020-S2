@@ -99,22 +99,9 @@ double get_battle_time()
 
 void initialize_mutexes(pokemon_data_t *pokemon_data_list)
 {
-	for (int i = 0; i < AMOUNT_OF_POKEMON; ++i)
-	{
-		pthread_mutex_init(&pokemon_data_list[i].my_mutex, NULL);
-
-	}
 	pthread_mutex_init(&shared_data->charged_attack_mutex, NULL);
 	pthread_mutex_init(&shared_data->p0mutex, NULL);
 	pthread_mutex_init(&shared_data->p1mutex, NULL);
-}
-
-void lock_mutexes(pokemon_data_t *pokemon_data_list)
-{
-	for (int i = 1; i < AMOUNT_OF_POKEMON; ++i)
-	{
-		pthread_mutex_lock(&pokemon_data_list[i].my_mutex);
-	}
 }
 
 void assign_shared_data(shared_data_t *shared_data, pokemon_data_t *pokemon_data_list)
@@ -152,8 +139,6 @@ void initialize_game()
 	assign_shared_data(shared_data, p0_pokemon_data_list);
 	assign_shared_data(shared_data, p1_pokemon_data_list);
 	start_battle_time(&battle_time);
-	//lock_mutexes(p0_pokemon_data_list);
-	//lock_mutexes(p1_pokemon_data_list);
 	assign_active_pokemon_num(shared_data, 0, 0);
 	assign_active_pokemon_num(shared_data, 0, 0);
 }
@@ -244,10 +229,9 @@ attack_data_t do_fast_attack(int my_id, int opponent_id, pokemon_data_t my_data_
 
 void *fight0(void *args)
 {
-	pokemon_data_t *pokemon_data = (pokemon_data_t *)args;
-	//pthread_barrier_wait(&shared_data->barrier0);
-	//pthread_mutex_lock(&pokemon_data->my_mutex);
+	pthread_barrier_wait(&shared_data->barrier0);
 	pthread_mutex_lock(&shared_data->p0mutex);
+	pokemon_data_t *pokemon_data = (pokemon_data_t *)args;
 	int my_num = shared_data->active_p0_num;
 	int opponent_num = shared_data->active_p1_num;
 	int my_id = p0_pokemon_data_list[my_num].id;
@@ -276,11 +260,10 @@ void *fight0(void *args)
 	{
 		walltime_elapsed(&p1_pokemon_data_list[opponent_num].time_lived);
 		if(opponent_num != 2)
-		{
-			//printf("(F0 I WON) Pokemon ID = %d won\n", my_id); 
-			printf("%s won\n",get_pokemon_species_name(my_id));
-			printf("%s lost\n", get_pokemon_species_name(opponent_id));
-			//shared_data->active_p1_num++;
+		{ 
+			//printf("%s won\n",get_pokemon_species_name(my_id));
+			//printf("%s lost\n", get_pokemon_species_name(opponent_id));
+			shared_data->active_p1_num++;
 		}
 	}
 	//if i lost
@@ -289,22 +272,20 @@ void *fight0(void *args)
 		walltime_elapsed(&p0_pokemon_data_list[my_num].time_lived);
 		if (my_num != 2)
 		{
-			printf("%s won\n",get_pokemon_species_name(opponent_id));
-			printf("%s lost\n", get_pokemon_species_name(my_id));
-			//shared_data->active_p0_num++;
+			//printf("%s won\n",get_pokemon_species_name(opponent_id));
+			//printf("%s lost\n", get_pokemon_species_name(my_id));
+			shared_data->active_p0_num++;
 		}
 	}
-	//pthread_mutex_unlock(&pokemon_data->my_mutex);
 	pthread_mutex_unlock(&shared_data->p0mutex);
 	return NULL;
 }
 
 void *fight1(void *args)
 {
-	pokemon_data_t *pokemon_data = (pokemon_data_t *)args;
-	//pthread_barrier_wait(&shared_data->barrier1);
-	//pthread_mutex_lock(&pokemon_data->my_mutex);
+    pthread_barrier_wait(&shared_data->barrier1);
 	pthread_mutex_lock(&shared_data->p1mutex);
+	pokemon_data_t *pokemon_data = (pokemon_data_t *)args;
 	int my_num = shared_data->active_p1_num;
 	int opponent_num = shared_data->active_p0_num;
 	int my_id = p1_pokemon_data_list[my_num].id;
@@ -332,7 +313,7 @@ void *fight1(void *args)
 	if(p1_pokemon_data_list[my_num].hp > 0 && p0_pokemon_data_list[opponent_num].hp <= 0)
 	{
 		walltime_elapsed(&p0_pokemon_data_list[opponent_num].time_lived);
-		if(opponent_num != 2)
+		if(opponent_num < AMOUNT_OF_POKEMON)
 		{
 			printf("%s won\n",get_pokemon_species_name(my_id));
 			printf("%s lost\n", get_pokemon_species_name(opponent_id));
@@ -343,14 +324,13 @@ void *fight1(void *args)
 	if(p1_pokemon_data_list[my_num].hp <= 0 && p0_pokemon_data_list[opponent_num].hp > 0)
 	{
 		walltime_elapsed(&p1_pokemon_data_list[my_num].time_lived);
-		if (my_num != 2)
+		if (my_num < AMOUNT_OF_POKEMON)
 		{
 			printf("%s won\n",get_pokemon_species_name(opponent_id));
 			printf("%s lost\n", get_pokemon_species_name(my_id));
 			shared_data->active_p1_num++;
 		}
 	}
-	//pthread_mutex_unlock(&pokemon_data->my_mutex);
 	pthread_mutex_unlock(&shared_data->p1mutex);
 	return NULL;
 }
@@ -401,12 +381,9 @@ void free_memory(pthread_t *p0threads, pthread_t *p1threads,
 	free(shared_data);
 	free(p0_list);
 	free(p1_list);
-	for (int i = 0; i < AMOUNT_OF_POKEMON; ++i)
-	{
-		pthread_mutex_destroy(&p0_pokemon_data_list[i].my_mutex);
-		pthread_mutex_destroy(&p1_pokemon_data_list[i].my_mutex);
-	}
 	pthread_mutex_destroy(&shared_data->charged_attack_mutex);
+	pthread_mutex_destroy(&shared_data->p0mutex);
+	pthread_mutex_destroy(&shared_data->p1mutex);
 	pthread_barrier_destroy(&shared_data->barrier0);
 	pthread_barrier_destroy(&shared_data->barrier1);
 }
