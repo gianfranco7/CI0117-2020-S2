@@ -13,7 +13,9 @@ walltime_t battle_time;
 
 typedef struct
 {
-    pthread_barrier_t barrier;
+    pthread_barrier_t barrier0;
+    pthread_barrier_t barrier1;
+    pthread_mutex_t charged_attack_mutex;
     int active_p0_num;  //battle order num
     int active_p1_num;  //battle order_num
 } shared_data_t;
@@ -29,6 +31,12 @@ typedef struct
     pthread_mutex_t my_mutex;
     shared_data_t *shared_data;
 } pokemon_data_t;
+
+typedef struct
+{
+    double my_energy;
+    double opponent_hp;
+} attack_data_t;
 
 shared_data_t *shared_data;
 pthread_t *p0_pokemon;
