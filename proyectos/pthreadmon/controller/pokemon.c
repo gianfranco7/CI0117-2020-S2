@@ -233,48 +233,51 @@ void *fight0(void *args)
 	pthread_mutex_lock(&shared_data->p0mutex);
 	pokemon_data_t *pokemon_data = (pokemon_data_t *)args;
 	int my_num = shared_data->active_p0_num;
-	int opponent_num = shared_data->active_p1_num;
-	int my_id = p0_pokemon_data_list[my_num].id;
-	int opponent_id = p1_pokemon_data_list[opponent_num].id;
-	walltime_start(&p0_pokemon_data_list[my_num].time_lived);
-	while (p0_pokemon_data_list[my_num].hp > 0 && p1_pokemon_data_list[opponent_num].hp > 0)
+	while (p0_pokemon_data_list[my_num].hp > 0 && p1_pokemon_data_list[2].hp > 0)
 	{
-		if (p0_pokemon_data_list[my_num].power >= get_move_energy(get_pokemon_charged_move_id(p0_pokemon_data_list[my_num].id)))
+		int opponent_num = shared_data->active_p1_num;
+		int my_id = p0_pokemon_data_list[my_num].id;
+		int opponent_id = p1_pokemon_data_list[opponent_num].id;
+		walltime_start(&p0_pokemon_data_list[my_num].time_lived);
+		while (p0_pokemon_data_list[my_num].hp > 0 && p1_pokemon_data_list[opponent_num].hp > 0)
 		{
-			attack_data_t attack_data;
-			attack_data = do_charged_attack(my_id, opponent_id, p0_pokemon_data_list[my_num], p1_pokemon_data_list[opponent_num]);
-			p0_pokemon_data_list[my_num].power = attack_data.my_energy;
-			p1_pokemon_data_list[opponent_num].hp = attack_data.opponent_hp;
-		}
-		else
-		{
-			attack_data_t attack_data;
-			attack_data = do_fast_attack(my_id, opponent_id, p0_pokemon_data_list[my_num], p1_pokemon_data_list[opponent_num]);
-			p0_pokemon_data_list[my_num].power = attack_data.my_energy;
-			p1_pokemon_data_list[opponent_num].hp = attack_data.opponent_hp;
-		}
-	}
+			if (p0_pokemon_data_list[my_num].power >= get_move_energy(get_pokemon_charged_move_id(p0_pokemon_data_list[my_num].id)))
+			{
+				attack_data_t attack_data;
+				attack_data = do_charged_attack(my_id, opponent_id, p0_pokemon_data_list[my_num], p1_pokemon_data_list[opponent_num]);
+				p0_pokemon_data_list[my_num].power = attack_data.my_energy;
+				p1_pokemon_data_list[opponent_num].hp = attack_data.opponent_hp;
+			}
+			else
+			{
+				attack_data_t attack_data;
+				attack_data = do_fast_attack(my_id, opponent_id, p0_pokemon_data_list[my_num], p1_pokemon_data_list[opponent_num]);
+				p0_pokemon_data_list[my_num].power = attack_data.my_energy;
+				p1_pokemon_data_list[opponent_num].hp = attack_data.opponent_hp;
+			}
 
-	//if i won
-	if(p0_pokemon_data_list[my_num].hp > 0 && p1_pokemon_data_list[opponent_num].hp <= 0)
-	{
-		walltime_elapsed(&p1_pokemon_data_list[opponent_num].time_lived);
-		if(opponent_num != 2)
-		{ 
-			//printf("%s won\n",get_pokemon_species_name(my_id));
-			//printf("%s lost\n", get_pokemon_species_name(opponent_id));
-			shared_data->active_p1_num++;
-		}
-	}
-	//if i lost
-	if(p0_pokemon_data_list[my_num].hp <= 0 && p1_pokemon_data_list[opponent_num].hp > 0)
-	{
-		walltime_elapsed(&p0_pokemon_data_list[my_num].time_lived);
-		if (my_num != 2)
-		{
-			//printf("%s won\n",get_pokemon_species_name(opponent_id));
-			//printf("%s lost\n", get_pokemon_species_name(my_id));
-			shared_data->active_p0_num++;
+			//if i won
+			if (p0_pokemon_data_list[my_num].hp > 0 && p1_pokemon_data_list[opponent_num].hp <= 0)
+			{
+				walltime_elapsed(&p1_pokemon_data_list[opponent_num].time_lived);
+				if (opponent_num != 2)
+				{
+					//printf("%s won\n",get_pokemon_species_name(my_id));
+					//printf("%s lost\n", get_pokemon_species_name(opponent_id));
+					//shared_data->active_p1_num++;
+				}
+			}
+			//if i lost
+			if (p0_pokemon_data_list[my_num].hp <= 0 && p1_pokemon_data_list[opponent_num].hp > 0)
+			{
+				walltime_elapsed(&p0_pokemon_data_list[my_num].time_lived);
+				if (my_num != 2)
+				{
+					//printf("%s won\n",get_pokemon_species_name(opponent_id));
+					//printf("%s lost\n", get_pokemon_species_name(my_id));
+					//shared_data->active_p0_num++;
+				}
+			}
 		}
 	}
 	pthread_mutex_unlock(&shared_data->p0mutex);
@@ -283,52 +286,54 @@ void *fight0(void *args)
 
 void *fight1(void *args)
 {
-    pthread_barrier_wait(&shared_data->barrier1);
+	pthread_barrier_wait(&shared_data->barrier1);
 	pthread_mutex_lock(&shared_data->p1mutex);
 	pokemon_data_t *pokemon_data = (pokemon_data_t *)args;
 	int my_num = shared_data->active_p1_num;
-	int opponent_num = shared_data->active_p0_num;
-	int my_id = p1_pokemon_data_list[my_num].id;
-	int opponent_id = p0_pokemon_data_list[opponent_num].id;
-	walltime_start(&p1_pokemon_data_list[my_num].time_lived);
-	while (p1_pokemon_data_list[my_num].hp > 0 && p0_pokemon_data_list[opponent_num].hp > 0)
+	while (p1_pokemon_data_list[my_num].hp > 0 && p0_pokemon_data_list[2].hp > 0)
 	{
-		if (p1_pokemon_data_list[my_num].power >= get_move_energy(get_pokemon_charged_move_id(p1_pokemon_data_list[my_num].id)))
+		int opponent_num = shared_data->active_p0_num;
+		int my_id = p1_pokemon_data_list[my_num].id;
+		int opponent_id = p0_pokemon_data_list[opponent_num].id;
+		walltime_start(&p1_pokemon_data_list[my_num].time_lived);
+		while (p1_pokemon_data_list[my_num].hp > 0 && p0_pokemon_data_list[opponent_num].hp > 0)
 		{
-			attack_data_t attack_data;
-			attack_data = do_charged_attack(my_id, opponent_id, p1_pokemon_data_list[my_num], p0_pokemon_data_list[opponent_num]);
-			p1_pokemon_data_list[my_num].power = attack_data.my_energy;
-			p0_pokemon_data_list[opponent_num].hp = attack_data.opponent_hp;
-		}
-		else
-		{
-			attack_data_t attack_data;
-			attack_data = do_fast_attack(my_id, opponent_id, p1_pokemon_data_list[my_num], p0_pokemon_data_list[opponent_num]);
-			p1_pokemon_data_list[my_num].power = attack_data.my_energy;
-			p0_pokemon_data_list[opponent_num].hp = attack_data.opponent_hp;
-		}
-	}
-
-	//if i won
-	if(p1_pokemon_data_list[my_num].hp > 0 && p0_pokemon_data_list[opponent_num].hp <= 0)
-	{
-		walltime_elapsed(&p0_pokemon_data_list[opponent_num].time_lived);
-		if(opponent_num < AMOUNT_OF_POKEMON)
-		{
-			printf("%s won\n",get_pokemon_species_name(my_id));
-			printf("%s lost\n", get_pokemon_species_name(opponent_id));
-			shared_data->active_p0_num++;
-		}
-	}
-	//if i lost
-	if(p1_pokemon_data_list[my_num].hp <= 0 && p0_pokemon_data_list[opponent_num].hp > 0)
-	{
-		walltime_elapsed(&p1_pokemon_data_list[my_num].time_lived);
-		if (my_num < AMOUNT_OF_POKEMON)
-		{
-			printf("%s won\n",get_pokemon_species_name(opponent_id));
-			printf("%s lost\n", get_pokemon_species_name(my_id));
-			shared_data->active_p1_num++;
+			if (p1_pokemon_data_list[my_num].power >= get_move_energy(get_pokemon_charged_move_id(p1_pokemon_data_list[my_num].id)))
+			{
+				attack_data_t attack_data;
+				attack_data = do_charged_attack(my_id, opponent_id, p1_pokemon_data_list[my_num], p0_pokemon_data_list[opponent_num]);
+				p1_pokemon_data_list[my_num].power = attack_data.my_energy;
+				p0_pokemon_data_list[opponent_num].hp = attack_data.opponent_hp;
+			}
+			else
+			{
+				attack_data_t attack_data;
+				attack_data = do_fast_attack(my_id, opponent_id, p1_pokemon_data_list[my_num], p0_pokemon_data_list[opponent_num]);
+				p1_pokemon_data_list[my_num].power = attack_data.my_energy;
+				p0_pokemon_data_list[opponent_num].hp = attack_data.opponent_hp;
+			}
+			//if i won
+			if (p1_pokemon_data_list[my_num].hp > 0 && p0_pokemon_data_list[opponent_num].hp <= 0)
+			{
+				walltime_elapsed(&p0_pokemon_data_list[opponent_num].time_lived);
+				if (opponent_num < AMOUNT_OF_POKEMON)
+				{
+					printf("%s won\n", get_pokemon_species_name(my_id));
+					printf("%s lost\n", get_pokemon_species_name(opponent_id));
+					shared_data->active_p0_num++;
+				}
+			}
+			//if i lost
+			if (p1_pokemon_data_list[my_num].hp <= 0 && p0_pokemon_data_list[opponent_num].hp > 0)
+			{
+				walltime_elapsed(&p1_pokemon_data_list[my_num].time_lived);
+				if (my_num < AMOUNT_OF_POKEMON)
+				{
+					printf("%s won\n", get_pokemon_species_name(opponent_id));
+					printf("%s lost\n", get_pokemon_species_name(my_id));
+					shared_data->active_p1_num++;
+				}
+			}
 		}
 	}
 	pthread_mutex_unlock(&shared_data->p1mutex);
@@ -373,8 +378,7 @@ void join_threads(pthread_t *threads, size_t thread_count)
 	}
 }
 
-void free_memory(pthread_t *p0threads, pthread_t *p1threads,
-				 shared_data_t *shared_data, pokemon_data_t *p0_list, pokemon_data_t *p1_list)
+void free_memory(pthread_t *p0threads, pthread_t *p1threads, shared_data_t *shared_data, pokemon_data_t *p0_list, pokemon_data_t *p1_list)
 {
 	free(p0threads);
 	free(p1threads);
