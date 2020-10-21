@@ -197,7 +197,7 @@ attack_data_t do_charged_attack(int my_id, int opponent_id, pokemon_data_t my_da
 	attack_data.my_energy = (my_data_list.power -= energy);
 	//printf("My energy after charged hit = %lf\n", my_data_list.power);
 	//printf("Pokemon will usleep for %d microseconds\n", get_move_cooldown(get_pokemon_charged_move_id(my_id)));
-	usleep(get_move_cooldown(get_pokemon_charged_move_id(my_id)));
+	usleep(get_move_cooldown(get_pokemon_charged_move_id(my_id))*1000);
 	pthread_mutex_unlock(&shared_data->charged_attack_mutex);
 	return attack_data;
 }
@@ -223,7 +223,7 @@ attack_data_t do_fast_attack(int my_id, int opponent_id, pokemon_data_t my_data_
 	attack_data.my_energy = (my_data_list.power += energy);
 	//printf("My energy after fast hit = %lf\n", my_data_list.power);
 	//printf("Pokemon will usleep for %d microseconds\n", get_move_cooldown(get_pokemon_charged_move_id(my_id)));
-	usleep(get_move_cooldown(get_pokemon_fast_move_id(my_id)));
+	usleep(get_move_cooldown(get_pokemon_fast_move_id(my_id))*1000);
 	return attack_data;
 }
 

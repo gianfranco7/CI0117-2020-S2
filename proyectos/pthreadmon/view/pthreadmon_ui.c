@@ -36,33 +36,93 @@ static gboolean display_pthreadmon_data(GtkWidget *widget, GdkEventExpose *event
     {
         if (p0_pokemon_data_list[0].active)
         {
+            char hp[4];
+            sprintf(hp, "%.0lf", p0_pokemon_data_list[0].hp);
+            char energy[4];
+            sprintf(energy, "%.0lf", p0_pokemon_data_list[0].power);
             gtk_label_set_text(GTK_LABEL(app_elements->player1_active_name),
              (char *)get_pokemon_species_name(p0_pokemon_data_list[0].id));
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_active_hp),hp);
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_active_energy),energy);
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_fast_attack),
+             (char *)get_move_name(get_pokemon_fast_move_id(p0_pokemon_data_list[0].id)));
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_charged_attack),
+             (char *)get_move_name(get_pokemon_charged_move_id(p0_pokemon_data_list[0].id)));
         }
         if (p0_pokemon_data_list[1].active)
         {
+            char hp[4];
+            sprintf(hp, "%.0lf", p0_pokemon_data_list[1].hp);
+            char energy[4];
+            sprintf(energy, "%.0lf", p0_pokemon_data_list[1].power);
             gtk_label_set_text(GTK_LABEL(app_elements->player1_active_name),
              (char *)get_pokemon_species_name(p0_pokemon_data_list[1].id));
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_active_hp),hp);
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_active_energy),energy);
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_fast_attack),
+             (char *)get_move_name(get_pokemon_fast_move_id(p0_pokemon_data_list[1].id)));
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_charged_attack),
+             (char *)get_move_name(get_pokemon_charged_move_id(p0_pokemon_data_list[1].id)));
         }
         if (p0_pokemon_data_list[2].active)
         {
+            char hp[4];
+            sprintf(hp, "%.0lf", p0_pokemon_data_list[2].hp);
+            char energy[4];
+            sprintf(energy, "%.0lf", p0_pokemon_data_list[2].power);
             gtk_label_set_text(GTK_LABEL(app_elements->player1_active_name),
              (char *)get_pokemon_species_name(p0_pokemon_data_list[2].id));
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_active_hp),hp);
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_active_energy),energy);
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_fast_attack),
+             (char *)get_move_name(get_pokemon_fast_move_id(p0_pokemon_data_list[2].id)));
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_charged_attack),
+             (char *)get_move_name(get_pokemon_charged_move_id(p0_pokemon_data_list[2].id))); 
         }
         if (p1_pokemon_data_list[0].active)
         {
+            char hp[4];
+            sprintf(hp, "%.0lf", p1_pokemon_data_list[0].hp);
+            char energy[4];
+            sprintf(energy, "%.0lf", p1_pokemon_data_list[0].power);
             gtk_label_set_text(GTK_LABEL(app_elements->player2_active_name),
              (char *)get_pokemon_species_name(p1_pokemon_data_list[0].id));
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_active_hp),hp);
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_active_energy),energy);
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_fast_attack),
+             (char *)get_move_name(get_pokemon_fast_move_id(p1_pokemon_data_list[0].id)));
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_charged_attack),
+             (char *)get_move_name(get_pokemon_charged_move_id(p1_pokemon_data_list[0].id)));
         }
         if (p1_pokemon_data_list[1].active)
         {
+            char hp[4];
+            sprintf(hp, "%.0lf", p1_pokemon_data_list[1].hp);
+            char energy[4];
+            sprintf(energy, "%.0lf", p1_pokemon_data_list[1].power);
             gtk_label_set_text(GTK_LABEL(app_elements->player2_active_name),
              (char *)get_pokemon_species_name(p1_pokemon_data_list[1].id));
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_active_hp),hp);
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_active_energy),energy);
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_fast_attack),
+             (char *)get_move_name(get_pokemon_fast_move_id(p1_pokemon_data_list[1].id)));
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_charged_attack),
+             (char *)get_move_name(get_pokemon_charged_move_id(p1_pokemon_data_list[1].id)));
         }
         if (p1_pokemon_data_list[2].active)
         {
+            char hp[4];
+            sprintf(hp, "%.0lf", p1_pokemon_data_list[2].hp);
+            char energy[4];
+            sprintf(energy, "%.0lf", p1_pokemon_data_list[2].power);
             gtk_label_set_text(GTK_LABEL(app_elements->player2_active_name),
              (char *)get_pokemon_species_name(p1_pokemon_data_list[2].id));
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_active_hp),hp);
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_active_energy),energy);
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_fast_attack),
+             (char *)get_move_name(get_pokemon_fast_move_id(p1_pokemon_data_list[2].id)));
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_charged_attack),
+             (char *)get_move_name(get_pokemon_charged_move_id(p1_pokemon_data_list[2].id)));
         }
     }
     return TRUE;
