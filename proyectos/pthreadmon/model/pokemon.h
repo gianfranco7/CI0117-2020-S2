@@ -29,6 +29,7 @@ typedef struct
     int id;
     double hp;
     double power;
+    int active;
     walltime_t time_lived;
     shared_data_t *shared_data;
 } pokemon_data_t;

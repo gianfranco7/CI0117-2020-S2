@@ -131,10 +131,10 @@ void initialize_synchronization_structures()
 
 void initialize_game()
 {
-	allocate_dynamic_memory();
-	initialize_synchronization_structures();
-	initialize_data();
-	get_pokemon();
+	//allocate_dynamic_memory();
+	//initialize_synchronization_structures();
+	//initialize_data();
+	//get_pokemon();
 	print_pokemon();
 	assign_shared_data(shared_data, p0_pokemon_data_list);
 	assign_shared_data(shared_data, p1_pokemon_data_list);
@@ -233,6 +233,7 @@ void *fight0(void *args)
 	pthread_mutex_lock(&shared_data->p0mutex);
 	pokemon_data_t *pokemon_data = (pokemon_data_t *)args;
 	int my_num = shared_data->active_p0_num;
+	p0_pokemon_data_list[my_num].active = 1;
 	while (p0_pokemon_data_list[my_num].hp > 0 && p1_pokemon_data_list[2].hp > 0)
 	{
 		int opponent_num = shared_data->active_p1_num;
@@ -268,6 +269,7 @@ void *fight0(void *args)
 			}
 		}
 	}
+	p0_pokemon_data_list[my_num].active = 0;
 	pthread_mutex_unlock(&shared_data->p0mutex);
 	return NULL;
 }
@@ -278,6 +280,7 @@ void *fight1(void *args)
 	pthread_mutex_lock(&shared_data->p1mutex);
 	pokemon_data_t *pokemon_data = (pokemon_data_t *)args;
 	int my_num = shared_data->active_p1_num;
+	p1_pokemon_data_list[my_num].active = 1;
 	while (p1_pokemon_data_list[my_num].hp > 0 && p0_pokemon_data_list[2].hp > 0)
 	{
 		int opponent_num = shared_data->active_p0_num;
@@ -324,6 +327,7 @@ void *fight1(void *args)
 			}
 		}
 	}
+	p1_pokemon_data_list[my_num].active = 0;
 	pthread_mutex_unlock(&shared_data->p1mutex);
 	return NULL;
 }

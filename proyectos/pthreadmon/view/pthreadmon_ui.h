@@ -28,7 +28,6 @@ typedef struct
     GtkWidget *player2_active_energy;
     GtkWidget *player2_fast_attack;
     GtkWidget *player2_charged_attack;
-
     GtkEntryBuffer *player1_pokemon1_buffer;
     GtkEntryBuffer *player1_pokemon2_buffer;
     GtkEntryBuffer *player1_pokemon3_buffer;
@@ -44,10 +43,5 @@ typedef struct
     GtkWidget *player_active_pokemon_hp_label;
     GtkWidget *player_active_pokemon_energy_label;
 } player_labels;
-
-typedef struct
-{
-    GtkWidget *attack_box;
-} attack_info_box;
 
 app_widgets *app_elements;

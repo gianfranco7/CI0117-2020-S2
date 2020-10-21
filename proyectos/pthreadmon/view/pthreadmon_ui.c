@@ -1,31 +1,75 @@
 #include "../view/pthreadmon_ui.h"
-static void my_callback(GObject *source_object, GAsyncResult *res, gpointer user_data){}
+static void my_callback(GObject *source_object, GAsyncResult *res, gpointer user_data) {}
 static void start_async(GTask *task, gpointer source_object, gpointer task_data, GCancellable *cancellable)
 {
     pthreadmon();
+}
+
+void get_user_input()
+{
+    p0_pokemon_data_list[0].id =
+        (int)strtoul(gtk_entry_buffer_get_text(app_elements->player1_pokemon1_buffer), NULL, 10);
+    p0_pokemon_data_list[1].id =
+        (int)strtoul(gtk_entry_buffer_get_text(app_elements->player1_pokemon2_buffer), NULL, 10);
+    p0_pokemon_data_list[2].id =
+        (int)strtoul(gtk_entry_buffer_get_text(app_elements->player1_pokemon3_buffer), NULL, 10);
+    p1_pokemon_data_list[0].id =
+        (int)strtoul(gtk_entry_buffer_get_text(app_elements->player2_pokemon1_buffer), NULL, 10);
+    p1_pokemon_data_list[1].id =
+        (int)strtoul(gtk_entry_buffer_get_text(app_elements->player2_pokemon2_buffer), NULL, 10);
+    p1_pokemon_data_list[2].id =
+        (int)strtoul(gtk_entry_buffer_get_text(app_elements->player2_pokemon3_buffer), NULL, 10);
 }
 
 static void start_clicked()
 {
     GCancellable *cancellable = g_cancellable_new();
     GTask *task = g_task_new(g_object_new(G_TYPE_OBJECT, NULL), cancellable, my_callback, NULL);
+    get_user_input();
     g_task_run_in_thread(task, start_async);
-    g_object_unref(task);    
+    g_object_unref(task);
 }
 
 static gboolean display_pthreadmon_data(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
     if (p0_pokemon_data_list && p1_pokemon_data_list)
     {
-
-
+        if (p0_pokemon_data_list[0].active)
+        {
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_active_name),
+             (char *)get_pokemon_species_name(p0_pokemon_data_list[0].id));
+        }
+        if (p0_pokemon_data_list[1].active)
+        {
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_active_name),
+             (char *)get_pokemon_species_name(p0_pokemon_data_list[1].id));
+        }
+        if (p0_pokemon_data_list[2].active)
+        {
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_active_name),
+             (char *)get_pokemon_species_name(p0_pokemon_data_list[2].id));
+        }
+        if (p1_pokemon_data_list[0].active)
+        {
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_active_name),
+             (char *)get_pokemon_species_name(p1_pokemon_data_list[0].id));
+        }
+        if (p1_pokemon_data_list[1].active)
+        {
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_active_name),
+             (char *)get_pokemon_species_name(p1_pokemon_data_list[1].id));
+        }
+        if (p1_pokemon_data_list[2].active)
+        {
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_active_name),
+             (char *)get_pokemon_species_name(p1_pokemon_data_list[2].id));
+        }
     }
     return TRUE;
 }
 
 void build_window(GtkApplication *app)
 {
-   //WINDOW CONSTRUCTOR
     app_elements->window = gtk_application_window_new(app);
     gtk_window_set_title(GTK_WINDOW(app_elements->window), "Pthreadmon");
     gtk_window_set_default_size(GTK_WINDOW(app_elements->window), 1000, 1000);
@@ -34,7 +78,6 @@ void build_window(GtkApplication *app)
 
 void build_grid()
 {
-    //GRID CONSTRUCTOR
     app_elements->grid = gtk_grid_new();
     gtk_grid_set_row_homogeneous(GTK_GRID(app_elements->grid), TRUE);
     gtk_grid_set_column_homogeneous(GTK_GRID(app_elements->grid), TRUE);
@@ -42,7 +85,6 @@ void build_grid()
 
 void attach_grid()
 {
-    ///ATTACH GRID TO WINDOW
     gtk_container_add(GTK_CONTAINER(app_elements->window), app_elements->grid);
 }
 
@@ -88,35 +130,34 @@ void initialize_labels()
 
 void attach_widgets()
 {
-    //ATTACH TO GRID
     //Fila 1
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_label, 1,1,1,1);
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_active_label, 2,1,1,1);
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_active_label, 3,1,1,1);
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_label, 4,1,1,1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_label, 1, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_active_label, 2, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_active_label, 3, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_label, 4, 1, 1, 1);
     //Fila 2
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_pokemon1, 1,2,1,1);
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_active_name, 2,2,1,1);
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_active_name, 3,2,1,1);
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_pokemon1, 4,2,1,1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_pokemon1, 1, 2, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_active_name, 2, 2, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_active_name, 3, 2, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_pokemon1, 4, 2, 1, 1);
     //Fila 3
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_pokemon2, 1,3,1,1);
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_active_hp, 2,3,1,1);
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_active_hp, 3,3,1,1);
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_pokemon2, 4,3,1,1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_pokemon2, 1, 3, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_active_hp, 2, 3, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_active_hp, 3, 3, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_pokemon2, 4, 3, 1, 1);
     //Fila 4
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_pokemon3, 1,4,1,1);
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_active_energy, 2,4,1,1);
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_active_energy, 3,4,1,1);
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_pokemon3, 4,4,1,1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_pokemon3, 1, 4, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_active_energy, 2, 4, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_active_energy, 3, 4, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_pokemon3, 4, 4, 1, 1);
     //Fila 5
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_fast_attack, 2,5,1,1);
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_fast_attack, 3,5,1,1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_fast_attack, 2, 5, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_fast_attack, 3, 5, 1, 1);
     //Fila 6
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_charged_attack, 2,6,1,1);
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_charged_attack, 3,6,1,1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_charged_attack, 2, 6, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_charged_attack, 3, 6, 1, 1);
     //Fila 7
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->startButton, 2,7,2,1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->startButton, 2, 7, 2, 1);
 }
 
 static void activate(GtkApplication *app, gpointer user_data)
@@ -134,10 +175,14 @@ static void activate(GtkApplication *app, gpointer user_data)
 
 int main(int argc, char *argv[])
 {
+    allocate_dynamic_memory();
+    initialize_synchronization_structures();
+    initialize_data();
     app_elements = (app_widgets *)calloc(1, sizeof(app_widgets));
     GtkApplication *app = gtk_application_new("gtk.pthreadmon", G_APPLICATION_FLAGS_NONE);
     g_signal_connect(app, "activate", G_CALLBACK(activate), NULL);
     int status = g_application_run(G_APPLICATION(app), argc, argv);
     g_object_unref(app);
+    free(app_elements);
     return status;
 }
