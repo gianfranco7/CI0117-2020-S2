@@ -38,10 +38,16 @@ typedef struct
 
 typedef struct
 {
-    GtkWidget *player_pokemon_labels[AMOUNT_OF_POKEMON];
-    GtkWidget *player_active_pokemon_name_label;
-    GtkWidget *player_active_pokemon_hp_label;
-    GtkWidget *player_active_pokemon_energy_label;
+    GtkWidget *player_label;                //STATIC PLAYER LABEL
+    GtkWidget *active_label;                //STATIC PLAYER ACTIVE POKEMON LABEL
+    GtkWidget *pokemon[2];                  //GTK ENTRY
+    GtkEntryBuffer *pokemon_buffer[2];      //GTK ENTRY BUFFER
+    GtkWidget *name;                        //ACTIVE POKEMON NAME 
+    GtkWidget *hp;                          //ACTIVE POKEMON HP
+    GtkWidget *energy;                      //ACTIVE POKEMON ENERGY
+    GtkWidget *fast_attack;                 //ACTIVE POKEMON FAST ATTACK
+    GtkWidget *charged_attack;              //ACTIVE POKEMON CHARGED ATTACK
+    
 } player_labels;
 
 app_widgets *app_elements;
