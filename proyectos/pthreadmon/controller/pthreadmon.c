@@ -1,5 +1,5 @@
 #include "pokemon.c"
-int main()
+int pthreadmon()
 {
 	initialize_game();
 	create_threads();

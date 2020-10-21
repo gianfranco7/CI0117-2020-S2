@@ -24,8 +24,8 @@ void allocate_dynamic_memory()
 	shared_data = (shared_data_t *)calloc(1, sizeof(shared_data_t));
 	p0_pokemon = malloc((size_t)(AMOUNT_OF_POKEMON * sizeof(pthread_t)));
 	p1_pokemon = malloc((size_t)(AMOUNT_OF_POKEMON * sizeof(pthread_t)));
-	p0_pokemon_data_list = malloc((size_t)(AMOUNT_OF_POKEMON * sizeof(pokemon_data_t)));
-	p1_pokemon_data_list = malloc((size_t)(AMOUNT_OF_POKEMON * sizeof(pokemon_data_t)));
+	p0_pokemon_data_list = malloc((size_t)(AMOUNT_OF_POKEMON * sizeof(pokemon_data_t))); //en el if del ui
+	p1_pokemon_data_list = malloc((size_t)(AMOUNT_OF_POKEMON * sizeof(pokemon_data_t))); //en el if del ui
 }
 
 int validate_pokemon(int scanned_id, int *validation_array)
@@ -260,23 +260,11 @@ void *fight0(void *args)
 			if (p0_pokemon_data_list[my_num].hp > 0 && p1_pokemon_data_list[opponent_num].hp <= 0)
 			{
 				walltime_elapsed(&p1_pokemon_data_list[opponent_num].time_lived);
-				if (opponent_num != 2)
-				{
-					//printf("%s won\n",get_pokemon_species_name(my_id));
-					//printf("%s lost\n", get_pokemon_species_name(opponent_id));
-					//shared_data->active_p1_num++;
-				}
 			}
 			//if i lost
 			if (p0_pokemon_data_list[my_num].hp <= 0 && p1_pokemon_data_list[opponent_num].hp > 0)
 			{
 				walltime_elapsed(&p0_pokemon_data_list[my_num].time_lived);
-				if (my_num != 2)
-				{
-					//printf("%s won\n",get_pokemon_species_name(opponent_id));
-					//printf("%s lost\n", get_pokemon_species_name(my_id));
-					//shared_data->active_p0_num++;
-				}
 			}
 		}
 	}
