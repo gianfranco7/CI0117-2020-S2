@@ -1,5 +1,4 @@
 #include <SDL2/SDL.h>
-
 void  * play_theme()
 {
     SDL_Init(SDL_INIT_AUDIO);
