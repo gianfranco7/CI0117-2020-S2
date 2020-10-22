@@ -239,17 +239,6 @@ void *fight0(void *args)
 				p0_pokemon_data_list[my_num].power = attack_data.my_energy;
 				p1_pokemon_data_list[opponent_num].hp = attack_data.opponent_hp;
 			}
-
-			//if i won
-			if (p0_pokemon_data_list[my_num].hp > 0 && p1_pokemon_data_list[opponent_num].hp <= 0)
-			{
-				//p1_pokemon_data_list[opponent_num].time_lived = walltime_elapsed(&p1_pokemon_data_list[opponent_num].time_lived);
-			}
-			//if i lost
-			if (p0_pokemon_data_list[my_num].hp <= 0 && p1_pokemon_data_list[opponent_num].hp > 0)
-			{
-				//p0_pokemon_data_list[my_num].time_lived = walltime_elapsed(&p0_pokemon_data_list[my_num].time_lived);
-			}
 		}
 	}
 	p0_pokemon_data_list[my_num].active = 0;
@@ -289,7 +278,6 @@ void *fight1(void *args)
 			//if i won
 			if (p1_pokemon_data_list[my_num].hp > 0 && p0_pokemon_data_list[opponent_num].hp <= 0)
 			{
-				//walltime_elapsed(&p0_pokemon_data_list[opponent_num].time_lived);
 				if (opponent_num < AMOUNT_OF_POKEMON)
 				{
 					printf("%s won\n", get_pokemon_species_name(my_id));
@@ -300,7 +288,6 @@ void *fight1(void *args)
 			//if i lost
 			if (p1_pokemon_data_list[my_num].hp <= 0 && p0_pokemon_data_list[opponent_num].hp > 0)
 			{
-				//walltime_elapsed(&p1_pokemon_data_list[my_num].time_lived);
 				if (my_num < AMOUNT_OF_POKEMON)
 				{
 					printf("%s won\n", get_pokemon_species_name(opponent_id));

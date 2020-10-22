@@ -1,23 +1,6 @@
-#include "../view/pthreadmon_ui.h"
+#include "../model/pthreadmon_ui.h"
+#include "../audio_handler/audio_handler.c"
 #include <string.h>
-#include <SDL2/SDL.h>
-
-void  * play_theme()
-{
-    SDL_Init(SDL_INIT_AUDIO);
-    SDL_AudioSpec wavSpec;
-    Uint32 wavLength;
-    Uint8 *wavBuffer;
-    SDL_LoadWAV("music/theme.wav", &wavSpec, &wavBuffer, &wavLength);
-    SDL_AudioDeviceID deviceId = SDL_OpenAudioDevice(NULL, 0, &wavSpec, NULL, 0);
-    int success = SDL_QueueAudio(deviceId, wavBuffer, wavLength);
-    SDL_PauseAudioDevice(deviceId, 0);
-    SDL_Delay(10000); 
-    SDL_CloseAudioDevice(deviceId);
-    SDL_FreeWAV(wavBuffer);
-    SDL_Quit();
-}
-
 static void my_callback(GObject *source_object, GAsyncResult *res, gpointer user_data) {}
 static void start_async(GTask *task, gpointer source_object, gpointer task_data, GCancellable *cancellable)
 {
@@ -25,6 +8,7 @@ static void start_async(GTask *task, gpointer source_object, gpointer task_data,
     pthread_create(&audio_thread, NULL, play_theme, NULL);
     pthreadmon();
 }
+
 
 void get_user_input()
 {
@@ -42,6 +26,81 @@ void get_user_input()
         (int)strtoul(gtk_entry_buffer_get_text(app_elements->player2_pokemon3_buffer), NULL, 10);
 }
 
+/*
+int get_player1_pokemon(pokemon_data_t *pokemon_data_list)
+{
+	signed int validation_array[AMOUNT_OF_POKEMON] = {-1, -1, -1};
+
+	int scanned_id1 = (int)strtoul(gtk_entry_buffer_get_text(app_elements->player1_pokemon1_buffer), NULL, 10);
+	while (validate_pokemon(scanned_id1, validation_array) == 1)
+	{
+		app_elements->player1_pokemon1_buffer = gtk_entry_buffer_new("Repeated ID", 11);
+        scanned_id1 = (int)strtoul(gtk_entry_buffer_get_text(app_elements->player1_pokemon1_buffer), NULL, 10);
+	}
+    validation_array[0] = scanned_id1;
+	pokemon_data_list[0].id = scanned_id1;
+
+    int scanned_id2 = (int)strtoul(gtk_entry_buffer_get_text(app_elements->player1_pokemon2_buffer), NULL, 10);
+    while (validate_pokemon(scanned_id2, validation_array) == 1)
+	{
+		app_elements->player1_pokemon2_buffer = gtk_entry_buffer_new("Repeated ID", 11);
+        scanned_id2 = (int)strtoul(gtk_entry_buffer_get_text(app_elements->player1_pokemon2_buffer), NULL, 10);
+	}
+	validation_array[1] = scanned_id2;
+	pokemon_data_list[1].id = scanned_id2;
+
+    int scanned_id3 = (int)strtoul(gtk_entry_buffer_get_text(app_elements->player1_pokemon3_buffer), NULL, 10);
+    while (validate_pokemon(scanned_id3, validation_array) == 1)
+	{
+		app_elements->player1_pokemon3_buffer = gtk_entry_buffer_new("Repeated ID", 11);
+        scanned_id3 = (int)strtoul(gtk_entry_buffer_get_text(app_elements->player1_pokemon3_buffer), NULL, 10);
+	}
+    validation_array[2] = scanned_id3;
+	pokemon_data_list[2].id = scanned_id3;
+    return 1;
+}
+
+int get_player2_pokemon(pokemon_data_t *pokemon_data_list)
+{
+	signed int validation_array[AMOUNT_OF_POKEMON] = {-1, -1, -1};
+
+	int scanned_id1 = (int)strtoul(gtk_entry_buffer_get_text(app_elements->player2_pokemon1_buffer), NULL, 10);
+	while (validate_pokemon(scanned_id1, validation_array) == 1)
+	{
+		app_elements->player2_pokemon1_buffer = gtk_entry_buffer_new("Repeated ID", 11);
+        scanned_id1 = (int)strtoul(gtk_entry_buffer_get_text(app_elements->player2_pokemon1_buffer), NULL, 10);
+	}
+    validation_array[0] = scanned_id1;
+	pokemon_data_list[0].id = scanned_id1;
+
+    int scanned_id2 = (int)strtoul(gtk_entry_buffer_get_text(app_elements->player2_pokemon2_buffer), NULL, 10);
+    while (validate_pokemon(scanned_id2, validation_array) == 1)
+	{
+		app_elements->player2_pokemon2_buffer = gtk_entry_buffer_new("Repeated ID", 11);
+        scanned_id2 = (int)strtoul(gtk_entry_buffer_get_text(app_elements->player2_pokemon2_buffer), NULL, 10);
+	}
+	validation_array[1] = scanned_id2;
+	pokemon_data_list[1].id = scanned_id2;
+
+    int scanned_id3 = (int)strtoul(gtk_entry_buffer_get_text(app_elements->player2_pokemon3_buffer), NULL, 10);
+    while (validate_pokemon(scanned_id3, validation_array) == 1)
+	{
+		app_elements->player2_pokemon3_buffer = gtk_entry_buffer_new("Repeated ID", 11);
+        scanned_id3 = (int)strtoul(gtk_entry_buffer_get_text(app_elements->player2_pokemon3_buffer), NULL, 10);
+	}
+    validation_array[2] = scanned_id3;
+	pokemon_data_list[2].id = scanned_id3;
+    return 1;
+}
+
+void get_user_input()
+{
+    while(get_player1_pokemon(p0_pokemon_data_list) !=1 && get_player2_pokemon(p1_pokemon_data_list)!=1)
+    {
+
+    }
+}
+*/
 void set_image(GtkWidget *image, int id)
 {
     char pokemon_name[15] = "";
