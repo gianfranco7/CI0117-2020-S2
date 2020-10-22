@@ -13,6 +13,7 @@ walltime_t battle_time;
 
 typedef struct
 {
+    int winner;
     pthread_barrier_t barrier0;
     pthread_barrier_t barrier1;
     pthread_mutex_t charged_attack_mutex;

@@ -138,6 +138,18 @@ void initialize_game()
 	assign_active_pokemon_num(shared_data, 0, 0);
 }
 
+int winner_winner_chicken_dinner()
+{
+	if(p0_pokemon_data_list[2].hp > 0 && p1_pokemon_data_list[2].hp <= 0)
+	{
+		return 1;
+	}
+	if(p0_pokemon_data_list[2].hp <= 0 && p1_pokemon_data_list[2].hp > 0)
+	{
+		return 2;
+	}
+}
+
 double calculate_effectiveness(int target_pokemon_type, int attacking_move_type)
 {
 	if (weaknesses_matrix[target_pokemon_type][attacking_move_type])
