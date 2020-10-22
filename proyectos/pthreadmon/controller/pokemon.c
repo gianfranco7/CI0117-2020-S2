@@ -131,14 +131,9 @@ void initialize_synchronization_structures()
 
 void initialize_game()
 {
-	//allocate_dynamic_memory();
-	//initialize_synchronization_structures();
-	//initialize_data();
-	//get_pokemon();
 	print_pokemon();
 	assign_shared_data(shared_data, p0_pokemon_data_list);
 	assign_shared_data(shared_data, p1_pokemon_data_list);
-	start_battle_time(&battle_time);
 	assign_active_pokemon_num(shared_data, 0, 0);
 	assign_active_pokemon_num(shared_data, 0, 0);
 }
@@ -147,17 +142,14 @@ double calculate_effectiveness(int target_pokemon_type, int attacking_move_type)
 {
 	if (weaknesses_matrix[target_pokemon_type][attacking_move_type])
 	{
-		//printf("It'super effective!!!\n");
 		return 1.6;
 	}
 	else if (resistances_matrix[target_pokemon_type][attacking_move_type])
 	{
-		//printf("It's mediumly effective!!!");
 		return 0.625;
 	}
 	else if (immunities_matrix[target_pokemon_type][attacking_move_type])
 	{
-		//printf("It's not very effective...\n");
 		return 0.390625;
 	}
 	else
@@ -180,24 +172,14 @@ attack_data_t do_charged_attack(int my_id, int opponent_id, pokemon_data_t my_da
 {
 	pthread_mutex_lock(&shared_data->charged_attack_mutex);
 	attack_data_t attack_data;
-	//printf("My energy parameter recieved by charged attack function = %lf\n", my_data_list.power);
-	//printf("Opponent health parameter recieved by charged attack function = %lf\n", opponent_data_list.hp);
-	//printf("Pokemon ID = %d entered charged attack function\n", my_id);
 	double energy = get_move_energy(get_pokemon_charged_move_id(my_data_list.id));
 	double effectiveness = calculate_effectiveness(get_pokemon_type_id(opponent_id), get_pokemon_type_id(my_id));
-	//printf("Effectiveness calculated = %lf\n", effectiveness);
 	double damage = calculate_damage(energy, effectiveness, ATTACK_BONUS);
-	//printf("Damage calculated = %lf\n", damage);
-	//printf("Opponent health before charged hit = %lf\n", opponent_data_list.hp);
 	opponent_data_list.hp -= damage;
 	attack_data.opponent_hp = (opponent_data_list.hp -= damage);
-	//printf("Opponent health after charged hit = %lf\n", opponent_data_list.hp);
-	//printf("My energy before charged hit = %lf\n", my_data_list.power);
 	my_data_list.power -= energy;
 	attack_data.my_energy = (my_data_list.power -= energy);
-	//printf("My energy after charged hit = %lf\n", my_data_list.power);
-	//printf("Pokemon will usleep for %d microseconds\n", get_move_cooldown(get_pokemon_charged_move_id(my_id)));
-	usleep(get_move_cooldown(get_pokemon_charged_move_id(my_id))*1000);
+	usleep(get_move_cooldown(get_pokemon_charged_move_id(my_id)) * 1000);
 	pthread_mutex_unlock(&shared_data->charged_attack_mutex);
 	return attack_data;
 }
@@ -205,25 +187,14 @@ attack_data_t do_charged_attack(int my_id, int opponent_id, pokemon_data_t my_da
 attack_data_t do_fast_attack(int my_id, int opponent_id, pokemon_data_t my_data_list, pokemon_data_t opponent_data_list)
 {
 	attack_data_t attack_data;
-	//printf("My energy parameter recieved by fast attack function = %lf\n", my_data_list.power);
-	//printf("Opponent health parameter recieved by fast attack function = %lf\n", opponent_data_list.hp);
-	//printf("The energy cost of my fast attack is %d\n", get_move_energy(get_pokemon_charged_move_id(my_id)));
-	//printf("Pokemon ID = %d entered fast attack function\n", my_id);
 	double energy = get_move_energy_gain(get_pokemon_fast_move_id(my_data_list.id));
 	double effectiveness = calculate_effectiveness(get_pokemon_type_id(opponent_id), get_pokemon_type_id(my_id));
-	//printf("Effectiveness calculated = %lf\n", effectiveness);
 	double damage = calculate_damage(energy, effectiveness, ATTACK_BONUS);
-	//printf("Damage calculated = %lf\n", damage);
-	//printf("Opponent health before fast hit = %lf\n", opponent_data_list.hp);
 	opponent_data_list.hp -= damage;
 	attack_data.opponent_hp = (opponent_data_list.hp -= damage);
-	//printf("Opponent health after fast hit = %lf\n", opponent_data_list.hp);
-	//printf("My energy before fast hit = %lf\n", my_data_list.power);
 	my_data_list.power += energy;
 	attack_data.my_energy = (my_data_list.power += energy);
-	//printf("My energy after fast hit = %lf\n", my_data_list.power);
-	//printf("Pokemon will usleep for %d microseconds\n", get_move_cooldown(get_pokemon_charged_move_id(my_id)));
-	usleep(get_move_cooldown(get_pokemon_fast_move_id(my_id))*1000);
+	usleep(get_move_cooldown(get_pokemon_fast_move_id(my_id)) * 1000);
 	return attack_data;
 }
 
@@ -234,12 +205,12 @@ void *fight0(void *args)
 	pokemon_data_t *pokemon_data = (pokemon_data_t *)args;
 	int my_num = shared_data->active_p0_num;
 	p0_pokemon_data_list[my_num].active = 1;
+	walltime_start(&p0_pokemon_data_list[my_num].time_lived);
 	while (p0_pokemon_data_list[my_num].hp > 0 && p1_pokemon_data_list[2].hp > 0)
 	{
 		int opponent_num = shared_data->active_p1_num;
 		int my_id = p0_pokemon_data_list[my_num].id;
 		int opponent_id = p1_pokemon_data_list[opponent_num].id;
-		walltime_start(&p0_pokemon_data_list[my_num].time_lived);
 		while (p0_pokemon_data_list[my_num].hp > 0 && p1_pokemon_data_list[opponent_num].hp > 0)
 		{
 			if (p0_pokemon_data_list[my_num].power >= get_move_energy(get_pokemon_charged_move_id(p0_pokemon_data_list[my_num].id)))
@@ -260,12 +231,12 @@ void *fight0(void *args)
 			//if i won
 			if (p0_pokemon_data_list[my_num].hp > 0 && p1_pokemon_data_list[opponent_num].hp <= 0)
 			{
-				walltime_elapsed(&p1_pokemon_data_list[opponent_num].time_lived);
+				//p1_pokemon_data_list[opponent_num].time_lived = walltime_elapsed(&p1_pokemon_data_list[opponent_num].time_lived);
 			}
 			//if i lost
 			if (p0_pokemon_data_list[my_num].hp <= 0 && p1_pokemon_data_list[opponent_num].hp > 0)
 			{
-				walltime_elapsed(&p0_pokemon_data_list[my_num].time_lived);
+				//p0_pokemon_data_list[my_num].time_lived = walltime_elapsed(&p0_pokemon_data_list[my_num].time_lived);
 			}
 		}
 	}
@@ -281,12 +252,12 @@ void *fight1(void *args)
 	pokemon_data_t *pokemon_data = (pokemon_data_t *)args;
 	int my_num = shared_data->active_p1_num;
 	p1_pokemon_data_list[my_num].active = 1;
+	walltime_start(&p1_pokemon_data_list[my_num].time_lived);
 	while (p1_pokemon_data_list[my_num].hp > 0 && p0_pokemon_data_list[2].hp > 0)
 	{
 		int opponent_num = shared_data->active_p0_num;
 		int my_id = p1_pokemon_data_list[my_num].id;
 		int opponent_id = p0_pokemon_data_list[opponent_num].id;
-		walltime_start(&p1_pokemon_data_list[my_num].time_lived);
 		while (p1_pokemon_data_list[my_num].hp > 0 && p0_pokemon_data_list[opponent_num].hp > 0)
 		{
 			if (p1_pokemon_data_list[my_num].power >= get_move_energy(get_pokemon_charged_move_id(p1_pokemon_data_list[my_num].id)))
@@ -306,7 +277,7 @@ void *fight1(void *args)
 			//if i won
 			if (p1_pokemon_data_list[my_num].hp > 0 && p0_pokemon_data_list[opponent_num].hp <= 0)
 			{
-				walltime_elapsed(&p0_pokemon_data_list[opponent_num].time_lived);
+				//walltime_elapsed(&p0_pokemon_data_list[opponent_num].time_lived);
 				if (opponent_num < AMOUNT_OF_POKEMON)
 				{
 					printf("%s won\n", get_pokemon_species_name(my_id));
@@ -317,7 +288,7 @@ void *fight1(void *args)
 			//if i lost
 			if (p1_pokemon_data_list[my_num].hp <= 0 && p0_pokemon_data_list[opponent_num].hp > 0)
 			{
-				walltime_elapsed(&p1_pokemon_data_list[my_num].time_lived);
+				//walltime_elapsed(&p1_pokemon_data_list[my_num].time_lived);
 				if (my_num < AMOUNT_OF_POKEMON)
 				{
 					printf("%s won\n", get_pokemon_species_name(opponent_id));
@@ -332,21 +303,9 @@ void *fight1(void *args)
 	return NULL;
 }
 
-void load_data_list(pokemon_data_t pokemon_data_list, int player_num)
-{
-	pokemon_data_list.shared_data = shared_data;
-	pokemon_data_list.hp = STARTING_HEALTH;
-	pokemon_data_list.power = STARTING_POWER;
-	pokemon_data_list.player_num = player_num;
-}
-
-void create_thread(pthread_t pokemon, pokemon_data_t pokemon_data_list, int function_num)
-{
-	pthread_create(&pokemon, NULL, fight0, (void *)&pokemon_data_list);
-}
-
 void create_threads()
 {
+	walltime_start(&battle_time);
 	for (int i = 0; i < AMOUNT_OF_POKEMON; ++i)
 	{
 		p0_pokemon_data_list[i].shared_data = shared_data;
