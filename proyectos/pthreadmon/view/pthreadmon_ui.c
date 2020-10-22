@@ -1,8 +1,28 @@
 #include "../view/pthreadmon_ui.h"
 #include <string.h>
+#include <SDL2/SDL.h>
+
+void  * play_theme()
+{
+    SDL_Init(SDL_INIT_AUDIO);
+    SDL_AudioSpec wavSpec;
+    Uint32 wavLength;
+    Uint8 *wavBuffer;
+    SDL_LoadWAV("view/theme.wav", &wavSpec, &wavBuffer, &wavLength);
+    SDL_AudioDeviceID deviceId = SDL_OpenAudioDevice(NULL, 0, &wavSpec, NULL, 0);
+    int success = SDL_QueueAudio(deviceId, wavBuffer, wavLength);
+    SDL_PauseAudioDevice(deviceId, 0);
+    SDL_Delay(100000); 
+    SDL_CloseAudioDevice(deviceId);
+    SDL_FreeWAV(wavBuffer);
+    SDL_Quit();
+}
+
 static void my_callback(GObject *source_object, GAsyncResult *res, gpointer user_data) {}
 static void start_async(GTask *task, gpointer source_object, gpointer task_data, GCancellable *cancellable)
 {
+    pthread_t audio_thread;
+    pthread_create(&audio_thread, NULL, play_theme, NULL);
     pthreadmon();
 }
 
@@ -31,8 +51,8 @@ void set_image(GtkWidget *image, int id)
     strcat(pokemon_name, file_extension);
     strcat(image_path, pokemon_name);
     gtk_image_set_from_file(GTK_IMAGE(image), image_path);
-    gtk_image_set_from_pixbuf(GTK_IMAGE(image), 
-    gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(image)), 56, 42, GDK_INTERP_NEAREST));
+    gtk_image_set_from_pixbuf(GTK_IMAGE(image),
+                              gdk_pixbuf_scale_simple(gtk_image_get_pixbuf(GTK_IMAGE(image)), 56, 42, GDK_INTERP_NEAREST));
 }
 
 static void start_clicked()
@@ -44,11 +64,11 @@ static void start_clicked()
     g_object_unref(task);
 }
 
-int get_activity_level(pokemon_data_t * pokemon_data_list)
+int get_activity_level(pokemon_data_t *pokemon_data_list)
 {
-    for(int i = 0; i < AMOUNT_OF_POKEMON; ++i)
+    for (int i = 0; i < AMOUNT_OF_POKEMON; ++i)
     {
-        if(pokemon_data_list[i].active == 1)
+        if (pokemon_data_list[i].active == 1)
         {
             return 0;
         }
@@ -177,17 +197,17 @@ static gboolean display_pthreadmon_data(GtkWidget *widget, GdkEventExpose *event
             gtk_label_set_text(GTK_LABEL(app_elements->player2_pokemon3_time), pokemon_time);
             set_image(app_elements->player2_active_image, p1_pokemon_data_list[2].id);
         }
-        if(winner_winner_chicken_dinner() == 1)
+        if (winner_winner_chicken_dinner() == 1)
         {
-            char * winner = "Winner Player 1";
+            char *winner = "Winner Player 1";
             gtk_label_set_text(GTK_LABEL(app_elements->winner_label), winner);
         }
-        if(winner_winner_chicken_dinner() == 2)
+        if (winner_winner_chicken_dinner() == 2)
         {
-            char * winner = "Winner Player 2";
-            gtk_label_set_text(GTK_LABEL(app_elements->winner_label), winner); 
+            char *winner = "Winner Player 2";
+            gtk_label_set_text(GTK_LABEL(app_elements->winner_label), winner);
         }
-    } 
+    }
     return TRUE;
 }
 
@@ -260,7 +280,6 @@ void initialize_labels()
     app_elements->player2_pokemon2_time = gtk_label_new("Pokémon 2 Time lived");
     app_elements->player2_pokemon3_time = gtk_label_new("Pokémon 3 Time lived");
 }
-
 
 void initialize_images()
 {
