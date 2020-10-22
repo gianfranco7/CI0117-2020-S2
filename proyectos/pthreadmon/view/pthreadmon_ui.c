@@ -1,4 +1,5 @@
 #include "../view/pthreadmon_ui.h"
+#include <string.h>
 static void my_callback(GObject *source_object, GAsyncResult *res, gpointer user_data) {}
 static void start_async(GTask *task, gpointer source_object, gpointer task_data, GCancellable *cancellable)
 {
@@ -21,6 +22,17 @@ void get_user_input()
         (int)strtoul(gtk_entry_buffer_get_text(app_elements->player2_pokemon3_buffer), NULL, 10);
 }
 
+
+void initialize_image(GtkWidget * image, int id)
+{
+    char pokemon_name[15] = "";
+    char * file_extension = ".png";
+    char image_path[30] = "sprites/";
+    sprintf(pokemon_name,"%s", get_pokemon_species_name(id));
+    strcat(pokemon_name, file_extension);
+    strcat(image_path,pokemon_name);
+}
+
 static void start_clicked()
 {
     GCancellable *cancellable = g_cancellable_new();
@@ -34,6 +46,9 @@ static gboolean display_pthreadmon_data(GtkWidget *widget, GdkEventExpose *event
 {
     if (p0_pokemon_data_list && p1_pokemon_data_list)
     {
+        char battle_time[100];
+        sprintf(battle_time, "%3.0lf", get_battle_time());
+        gtk_label_set_text(GTK_LABEL(app_elements->battle_time_label),battle_time);
         if (p0_pokemon_data_list[0].active)
         {
             char hp[4];
@@ -48,6 +63,10 @@ static gboolean display_pthreadmon_data(GtkWidget *widget, GdkEventExpose *event
              (char *)get_move_name(get_pokemon_fast_move_id(p0_pokemon_data_list[0].id)));
             gtk_label_set_text(GTK_LABEL(app_elements->player1_charged_attack),
              (char *)get_move_name(get_pokemon_charged_move_id(p0_pokemon_data_list[0].id)));
+
+            char pokemon_time[100];
+            sprintf(pokemon_time, "%3.0lf", walltime_elapsed(&p0_pokemon_data_list[0].time_lived));
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_pokemon1_time),pokemon_time);
         }
         if (p0_pokemon_data_list[1].active)
         {
@@ -63,6 +82,9 @@ static gboolean display_pthreadmon_data(GtkWidget *widget, GdkEventExpose *event
              (char *)get_move_name(get_pokemon_fast_move_id(p0_pokemon_data_list[1].id)));
             gtk_label_set_text(GTK_LABEL(app_elements->player1_charged_attack),
              (char *)get_move_name(get_pokemon_charged_move_id(p0_pokemon_data_list[1].id)));
+            char pokemon_time[100];
+            sprintf(pokemon_time, "%3.0lf", walltime_elapsed(&p0_pokemon_data_list[1].time_lived));
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_pokemon2_time),pokemon_time);
         }
         if (p0_pokemon_data_list[2].active)
         {
@@ -77,7 +99,10 @@ static gboolean display_pthreadmon_data(GtkWidget *widget, GdkEventExpose *event
             gtk_label_set_text(GTK_LABEL(app_elements->player1_fast_attack),
              (char *)get_move_name(get_pokemon_fast_move_id(p0_pokemon_data_list[2].id)));
             gtk_label_set_text(GTK_LABEL(app_elements->player1_charged_attack),
-             (char *)get_move_name(get_pokemon_charged_move_id(p0_pokemon_data_list[2].id))); 
+             (char *)get_move_name(get_pokemon_charged_move_id(p0_pokemon_data_list[2].id)));
+            char pokemon_time[100];
+            sprintf(pokemon_time, "%3.0lf", walltime_elapsed(&p0_pokemon_data_list[2].time_lived));
+            gtk_label_set_text(GTK_LABEL(app_elements->player1_pokemon3_time),pokemon_time); 
         }
         if (p1_pokemon_data_list[0].active)
         {
@@ -93,6 +118,9 @@ static gboolean display_pthreadmon_data(GtkWidget *widget, GdkEventExpose *event
              (char *)get_move_name(get_pokemon_fast_move_id(p1_pokemon_data_list[0].id)));
             gtk_label_set_text(GTK_LABEL(app_elements->player2_charged_attack),
              (char *)get_move_name(get_pokemon_charged_move_id(p1_pokemon_data_list[0].id)));
+            char pokemon_time[100];
+            sprintf(pokemon_time, "%3.0lf", walltime_elapsed(&p1_pokemon_data_list[0].time_lived));
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_pokemon1_time),pokemon_time); 
         }
         if (p1_pokemon_data_list[1].active)
         {
@@ -108,6 +136,9 @@ static gboolean display_pthreadmon_data(GtkWidget *widget, GdkEventExpose *event
              (char *)get_move_name(get_pokemon_fast_move_id(p1_pokemon_data_list[1].id)));
             gtk_label_set_text(GTK_LABEL(app_elements->player2_charged_attack),
              (char *)get_move_name(get_pokemon_charged_move_id(p1_pokemon_data_list[1].id)));
+             char pokemon_time[100];
+            sprintf(pokemon_time, "%3.0lf", walltime_elapsed(&p1_pokemon_data_list[1].time_lived));
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_pokemon2_time),pokemon_time);
         }
         if (p1_pokemon_data_list[2].active)
         {
@@ -123,6 +154,9 @@ static gboolean display_pthreadmon_data(GtkWidget *widget, GdkEventExpose *event
              (char *)get_move_name(get_pokemon_fast_move_id(p1_pokemon_data_list[2].id)));
             gtk_label_set_text(GTK_LABEL(app_elements->player2_charged_attack),
              (char *)get_move_name(get_pokemon_charged_move_id(p1_pokemon_data_list[2].id)));
+             char pokemon_time[100];
+            sprintf(pokemon_time, "%3.0lf", walltime_elapsed(&p1_pokemon_data_list[2].time_lived));
+            gtk_label_set_text(GTK_LABEL(app_elements->player2_pokemon3_time),pokemon_time);
         }
     }
     return TRUE;
@@ -186,6 +220,16 @@ void initialize_labels()
     app_elements->player2_active_energy = gtk_label_new("0");
     app_elements->player2_fast_attack = gtk_label_new("Fast Attack");
     app_elements->player2_charged_attack = gtk_label_new("Charged Attack");
+    
+    app_elements->winner_label = gtk_label_new("Winner");
+    app_elements->battle_time_label = gtk_label_new("Battle time");
+
+    app_elements->player1_pokemon1_time = gtk_label_new("Pokémon 1 Time lived");
+    app_elements->player1_pokemon2_time = gtk_label_new("Pokémon 2 Time lived");
+    app_elements->player1_pokemon3_time = gtk_label_new("Pokémon 3 Time lived");
+    app_elements->player2_pokemon1_time = gtk_label_new("Pokémon 1 Time lived");
+    app_elements->player2_pokemon2_time = gtk_label_new("Pokémon 2 Time lived");
+    app_elements->player2_pokemon3_time = gtk_label_new("Pokémon 3 Time lived");
 }
 
 void attach_widgets()
@@ -214,10 +258,20 @@ void attach_widgets()
     gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_fast_attack, 2, 5, 1, 1);
     gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_fast_attack, 3, 5, 1, 1);
     //Fila 6
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_pokemon1_time, 1, 6, 1, 1);
     gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_charged_attack, 2, 6, 1, 1);
     gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_charged_attack, 3, 6, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_pokemon1_time, 4, 6, 1, 1);
     //Fila 7
-    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->startButton, 2, 7, 2, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_pokemon2_time, 1, 7, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->winner_label, 2, 7, 2, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_pokemon2_time, 4, 7, 1, 1);
+    //Fila 8
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player1_pokemon3_time, 1, 8, 1, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->battle_time_label, 2, 8, 2, 1);
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->player2_pokemon3_time, 4, 8, 1, 1);
+    //Fila 9
+    gtk_grid_attach(GTK_GRID(app_elements->grid), app_elements->startButton, 2, 9, 2, 1);
 }
 
 static void activate(GtkApplication *app, gpointer user_data)
