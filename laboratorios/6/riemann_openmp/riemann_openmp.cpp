@@ -25,11 +25,12 @@ double f(double x){
 	return result;
 }
 
-
-double riemann_serial(double lower_limit, double upper_limit, double number_of_rectangles, int thread_count){
+double riemann_serial(double lower_limit, double upper_limit, int number_of_rectangles, int thread_count){
 	double rectangle_width =  (upper_limit-lower_limit)/number_of_rectangles;
 	double combined_area = 0;
-	for(int i = 0; i < number_of_rectangles; ++i){
+	#pragma omp parallel for reduction(+: combined_area)
+	for(int i = 0; i < number_of_rectangles; i++)
+	{
 		combined_area += f(lower_limit+(i*rectangle_width));	
 	}
 	return combined_area*rectangle_width;
@@ -48,7 +49,7 @@ int main(int argument_counter, char * arguments[]){
 	}
 	walltime_t time;
 	walltime_start(&time);
-	printf("The result is = %f\n", riemann_serial(lower_limit,upper_limit,number_of_rectangles));
+	printf("The result is = %f\n", riemann_serial(lower_limit,upper_limit,number_of_rectangles, thread_count));
 	double elapsed = walltime_elapsed(&time);
 	printf("Time taken = %f\n", elapsed);
 	return 0;
