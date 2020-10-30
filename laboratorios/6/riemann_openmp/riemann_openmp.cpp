@@ -28,9 +28,10 @@ double f(double x){
 double riemann_serial(double lower_limit, double upper_limit, int number_of_rectangles, int thread_count){
 	double rectangle_width =  (upper_limit-lower_limit)/number_of_rectangles;
 	double combined_area = 0;
-	#pragma omp parallel for reduction(+: combined_area)
+	#pragma omp parallel for num_threads(thread_count) reduction(+:combined_area)
 	for(int i = 0; i < number_of_rectangles; i++)
 	{
+		#pragma omp critical
 		combined_area += f(lower_limit+(i*rectangle_width));	
 	}
 	return combined_area*rectangle_width;
