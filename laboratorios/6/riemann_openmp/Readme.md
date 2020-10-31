@@ -11,3 +11,5 @@ Apunte la duración de cada ejecución y asegúrese de obtener las mismas áreas
 | 1000000  | 10.666659  |  0.044129 | 0.021274  | 0.105758 | 0.108517  | 0.030636 |
 | 100000000  | 10.666667  |  1.679289 | 0.370120 | 0.375199  | 0.367840  | 0.361289 |
 | 1000000000  | 10.666667   | 16.542770 | 3.161907| 3.268884  | 3.501298  | 3.258907 |
+
+Se obtuvieron resultados similares a los obtenidos en el laboratorio anterior, donde se paralelizó con pthreads.
