@@ -47,11 +47,9 @@ int main(int argc, char *argv[])
         schedule(static,1)
         for (i = 0; i < matrix_row.length(); ++i) {
             if (matrix_row[i] == '1' || test_vector[i] == '1') { // If the word is present in any of the texts being compared, sum up to Union
-                #pragma omp critical(words_union)
                 ++words_union;
             }
             if (matrix_row[i] == '1' && test_vector[i] == '1') { // If the word is present in both texts, then sum up to Intersection
-                #pragma omp critical(words_intersection)
                 ++words_intersection;
             }
         }
