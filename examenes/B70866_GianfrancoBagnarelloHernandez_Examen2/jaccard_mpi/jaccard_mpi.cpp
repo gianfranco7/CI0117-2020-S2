@@ -7,7 +7,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     string test_vector, test_text, matrix_row, text_row, most_similar_text;
-    int counter = 0;
+    int counter = 0;    //process control counter
     if (argc < 3)
     {
         cout << "Invalid number of params. Usage:" << endl;
@@ -28,8 +28,7 @@ int main(int argc, char *argv[])
         return 1;
     }
     int numprocs, myid;
-    MPI_Status status;
-    double max_jaccard_similarity_global = -2.0;
+    double max_jaccard_similarity_global = -2.0;    //global variable for jaccard final result
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myid);
@@ -37,9 +36,8 @@ int main(int argc, char *argv[])
     getline(matrix_file, test_vector); // Get the vector representation of the text to be evaluated
     getline(text_file, test_text);     // Get the text to be evaluated
     double words_union, words_intersection, jaccard_similarity, max_jaccard_similarity_local;
-    max_jaccard_similarity_local = -1.0;
+    max_jaccard_similarity_local = -1.0;            //local variable for each process
     int i;
-    int process_counter;
     while (getline(matrix_file, matrix_row) && getline(text_file, text_row))
     {
         if (counter == numprocs)
@@ -65,9 +63,8 @@ int main(int argc, char *argv[])
                     max_jaccard_similarity_local = jaccard_similarity;
                     most_similar_text = text_row;
                 }
-                cout << "PROCESS ID #" << myid << " DID " << text_row << " AND CALCULATED " << max_jaccard_similarity_local << endl;
             }
-            else{}
+            //else{}
         }
         else
         {
@@ -91,9 +88,8 @@ int main(int argc, char *argv[])
                     max_jaccard_similarity_local = jaccard_similarity;
                     most_similar_text = text_row;
                 }
-                cout << "PROCESS ID #" << myid << "DID" << text_row << endl;
             }
-            else{}
+            //else{}
             counter++;
         }
     }
