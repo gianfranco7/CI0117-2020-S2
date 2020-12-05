@@ -38,11 +38,8 @@ Donde la entidad Mario y World reciben funciones de la clase Entities, a la vez 
 Funcionalidades de MPI empleadas en este proyecto en el método main. 
 Para lograr la comunicación colectiva entre los procesos, se utiliza MPI_Reduce para cada Mario o proceso, donde van a tener su propia variable local que contiene el mínimo y el máximo de monedas, entonces con MPI_MIN y MPI_MAX, se va a conseguir cual proceso es el que posee la menor o la mayor cantidad de monedas y con esto se consigue el id del proceso y si es el Mario elegido el main imprime o no imprime.
 
-Limitaciones:
-Dentro de la clase Mario se encuentran las funciones para recibir y enviar ataques entre jugadores (procesos), por motivos de tiempo no se logró implementar el uso de MPI_Send y MPI_Recieve para usar estas funciones y lograr que los jugadores se comunicaran ataques. El programa corre de manera concurrente el Mario elegido por el usuario y los controlados por la computadora, cada Mario conoce la cantidad de jugadores que quedan activos, pero no se comunican ataques entre ellos. 
-Cada proceso tiene un registro del ID del jugador/proceso que lleva más monedas hasta el momento, esto se logra con MPI_Reduce (dos veces, se usa dos veces, una para calcular el que tiene menos y otra el que tiene más). Cada proceso además escoge a quién atacar con base en esto (y otros factores), además prepara el ataque para enviarlo, pero nunca los envía.
+Objetivo:
 
-Objetivo
 El objetivo de este proyecto es lograr la correcta implementación de
 un simulador de un Battle Royale de Procesos utilizando la interfaz de
 paso de mensajes o MPI (sigla del inglés message passing interface) que
@@ -66,7 +63,9 @@ Opciones del programa
 1. Ingreso a la simulación
 Para ingresar a la simulación, debe llamar a make desde consola y una
 vez compilado el programa debe escribir la siguiente directiva:
+
 mpiexec -n 7 ./super-mario-mpi 2 R
+
 Donde cada uno de estos valores representa:
 mpiexec: es el llamada al ejecutable de un programa que utiliza
 directivas de MPI.
@@ -125,3 +124,7 @@ simplificada del juego Super Mario Bross 35. Para esto se implementó
 varios procesos simultáneamente simulando el juego e interactuando
 entre ellos, donde cada jugador virtual simuló el recorrido de Mario a
 lo largo del primer mundo (1-1) de su versión original.
+
+##Limitaciones:
+Dentro de la clase Mario se encuentran las funciones para recibir y enviar ataques entre jugadores (procesos), por motivos de tiempo no se logró implementar el uso de MPI_Send y MPI_Recieve para usar estas funciones y lograr que los jugadores se comunicaran ataques. El programa corre de manera concurrente el Mario elegido por el usuario y los controlados por la computadora, cada Mario conoce la cantidad de jugadores que quedan activos, pero no se comunican ataques entre ellos. 
+Cada proceso tiene un registro del ID del jugador/proceso que lleva más monedas hasta el momento, esto se logra con MPI_Reduce (dos veces, se usa dos veces, una para calcular el que tiene menos y otra el que tiene más). Cada proceso además escoge a quién atacar con base en esto (y otros factores), además prepara el ataque para enviarlo, pero nunca los envía.
