@@ -1,0 +1,33 @@
+0. Entities                     //queue que contiene los elementos(entidades)
+    +Entities()                 //inicializa una lista
+    ~Entities()                 //destructor
+    
+    +addEntity(int entity)      // 0 Hole, 1 Coisaaan, 2 Little Goomba, 3 Koopa Troopa, 4 Empty
+    +removeEntity(int entity)   // 2 Little Goomba, 3 Koopa Troopa,
+
+1. World
+    
+    -Arreglo de elements
+    
+    +World()            //iniciliza un arreglo de elements de tamaño 100, inicializa las entidades por defecto(las mapeadas)
+    ~World()            //destructor
+    +getPositionElements()
+    //obtiene la estructura de datos queue que esta dentro de ese espacio del Arreglo
+    +getNext()
+    public: getNext(): [WorldElements]
+
+2. Mario
+
+    bool isActive;
+    int location;
+    int coins;
+    char strategy;  //R L M A
+
+    chooseAction(actionLists); // choose action based Prob
+
+3. Probability
+
+    0.05 de pasar
+
+
+	
