@@ -154,4 +154,7 @@ varios procesos simultáneamente simulando el juego e interactuando
 entre ellos, donde cada jugador virtual simuló el recorrido de Mario a
 lo largo del primer mundo (1-1) de su versión original.
 
+**NOTA** 
+Las imagenes utilizadas para diagramas de clases, etc se encuentran en la carpeta de documentación donde se detalla al respecto.
+
 
