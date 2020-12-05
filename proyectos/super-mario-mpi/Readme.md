@@ -16,6 +16,7 @@ Katherine González Arias B22867
 Profesor: Jose Andrés Mena Arias
 
 II Semestre, diciembre 2020 
+
 Para la programación del proyecto se utilizaron varias clases siguiente la estrategia de divide y vencerás, donde se crearon dos folders llamados Models y Controllers. 
 En el folder de Models se encuentran las clases de entities.cpp, mario.cpp y world.cpp. 
 entities.cpp: Me crea una lista de entidades que serán ubicadas en la clase world.cpp, además posee los métodos para poder agregar, obtener y eliminar entidades del mundo. 
